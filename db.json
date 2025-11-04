@@ -1,0 +1,1033 @@
+{
+  "users": [
+    {
+      "id": "u001",
+      "phoneNumber": "0388022504",
+      "name": "Soái Ca Hoàng Thành",
+      "avatar": "https://i.pravatar.cc/150?img=3",
+      "createdAt": "2025-10-28T09:04:50.739Z",
+      "lastLogin": "2025-11-04T09:39:32.150Z"
+    },
+    {
+      "id": "u002",
+      "phoneNumber": "0912345678",
+      "name": "Minh Anh",
+      "avatar": "https://i.pravatar.cc/150?img=8",
+      "createdAt": "2025-10-29T14:15:42.257Z",
+      "lastLogin": ""
+    },
+    {
+      "id": "2e9b",
+      "phoneNumber": "0388022404",
+      "name": "User",
+      "avatar": "",
+      "createdAt": "2025-10-31T07:54:23.792Z",
+      "lastLogin": "2025-10-31T07:54:23.792Z"
+    },
+    {
+      "id": "a2b9",
+      "phoneNumber": "0394528346",
+      "name": "User",
+      "avatar": "",
+      "createdAt": "2025-10-31T08:04:06.695Z",
+      "lastLogin": "2025-10-31T08:09:32.546Z"
+    },
+    {
+      "id": "fa46",
+      "phoneNumber": "0982847623",
+      "name": "User",
+      "avatar": "",
+      "createdAt": "2025-10-31T08:35:04.675Z",
+      "lastLogin": "2025-10-31T08:35:04.675Z"
+    },
+    {
+      "id": "504d",
+      "phoneNumber": "0982847645",
+      "name": "User",
+      "avatar": "",
+      "createdAt": "2025-10-31T08:37:51.261Z",
+      "lastLogin": "2025-10-31T08:37:51.261Z"
+    },
+    {
+      "id": "566f",
+      "phoneNumber": "0123456781",
+      "name": "User",
+      "avatar": "",
+      "createdAt": "2025-10-31T08:48:21.424Z",
+      "lastLogin": "2025-10-31T08:48:21.424Z"
+    },
+    {
+      "id": "274b",
+      "phoneNumber": "0987654321",
+      "name": "User",
+      "avatar": "",
+      "createdAt": "2025-10-31T08:52:08.012Z",
+      "lastLogin": "2025-10-31T08:52:08.012Z"
+    },
+    {
+      "id": "1151",
+      "phoneNumber": "0876541281",
+      "name": "User",
+      "avatar": "",
+      "createdAt": "2025-10-31T08:53:34.826Z",
+      "lastLogin": "2025-10-31T08:53:34.826Z"
+    },
+    {
+      "id": "f812",
+      "phoneNumber": "0987654376",
+      "name": "User",
+      "avatar": "",
+      "createdAt": "2025-10-31T08:54:39.914Z",
+      "lastLogin": "2025-10-31T08:54:39.914Z"
+    },
+    {
+      "id": "1f62",
+      "phoneNumber": "0988766281",
+      "name": "User",
+      "avatar": "",
+      "createdAt": "2025-10-31T09:12:21.318Z",
+      "lastLogin": "2025-10-31T09:13:00.904Z"
+    },
+    {
+      "id": "9064",
+      "phoneNumber": "123457689",
+      "name": "User",
+      "avatar": "",
+      "createdAt": "2025-10-31T09:19:11.437Z",
+      "lastLogin": "2025-10-31T09:19:11.437Z"
+    },
+    {
+      "id": "ff36",
+      "phoneNumber": "0981726532",
+      "name": "User",
+      "avatar": "",
+      "createdAt": "2025-10-31T09:55:41.584Z",
+      "lastLogin": "2025-10-31T09:55:41.584Z"
+    },
+    {
+      "id": "8848",
+      "phoneNumber": "0913751031",
+      "name": "User",
+      "avatar": "",
+      "createdAt": "2025-10-31T10:34:24.368Z",
+      "lastLogin": "2025-10-31T10:34:24.368Z"
+    }
+  ],
+  "otps": [
+    {
+      "id": "otp002",
+      "phoneNumber": "0912345678",
+      "otp": "654321"
+    },
+    {
+      "id": "c2bc",
+      "phoneNumber": "1324567879089-0=",
+      "otp": "369626"
+    },
+    {
+      "id": "eae6",
+      "phoneNumber": "0394528346",
+      "otp": "925433"
+    }
+  ],
+  "hotels": [
+    {
+      "id": "1",
+      "title": "Balian Treehouse Resort",
+      "location": "Bali, Indonesia",
+      "rating": 4.5,
+      "reviewsCount": 262,
+      "description": "Stunning beachfront villa with private pool and ocean views. Perfect for families and groups looking for a luxurious tropical getaway.",
+      "image": "/modern-apartment-bedroom-with-plants.jpg",
+      "facilities": [
+        {
+          "icon": "Wifi",
+          "label": "WiFi",
+          "description": "High-speed internet"
+        },
+        {
+          "icon": "Utensils",
+          "label": "Kitchen",
+          "description": "Fully equipped"
+        },
+        {
+          "icon": "Dumbbell",
+          "label": "Exercise equipment",
+          "description": "Gym access"
+        },
+        {
+          "icon": "Droplet",
+          "label": "Pool",
+          "description": "Private pool"
+        },
+        {
+          "icon": "Trees",
+          "label": "Garden",
+          "description": "Lush garden"
+        },
+        {
+          "icon": "Wind",
+          "label": "Air conditioning",
+          "description": "Climate control"
+        },
+        {
+          "icon": "Tv",
+          "label": "TV",
+          "description": "Smart TV"
+        },
+        {
+          "icon": "Coffee",
+          "label": "Coffee maker",
+          "description": "Premium coffee"
+        }
+      ],
+      "rooms": [
+        {
+          "id": 1,
+          "name": "Deluxe Room",
+          "size": 28,
+          "beds": "1 King Bed",
+          "maxGuests": 2,
+          "view": "City View",
+          "price": 120,
+          "available": true,
+          "image": "/modern-apartment-bedroom-with-plants.jpg",
+          "amenities": [
+            "TV",
+            "Air conditioning",
+            "WiFi",
+            "Minibar",
+            "Safe",
+            "Work desk"
+          ]
+        },
+        {
+          "id": 2,
+          "name": "Suite Room",
+          "size": 45,
+          "beds": "1 King Bed + Living Area",
+          "maxGuests": 4,
+          "view": "Ocean View",
+          "price": 180,
+          "available": true,
+          "image": "/luxury-bedroom-with-modern-design.jpg",
+          "amenities": [
+            "TV",
+            "Air conditioning",
+            "WiFi",
+            "Minibar",
+            "Safe",
+            "Work desk",
+            "Jacuzzi"
+          ]
+        },
+        {
+          "id": 3,
+          "name": "Family Room",
+          "size": 60,
+          "beds": "2 Double Beds",
+          "maxGuests": 6,
+          "view": "Garden View",
+          "price": 220,
+          "available": true,
+          "image": "/beach-house-with-pool-and-ocean-view.jpg",
+          "amenities": [
+            "TV",
+            "Air conditioning",
+            "WiFi",
+            "Minibar",
+            "Safe",
+            "Work desk",
+            "Kitchen"
+          ]
+        },
+        {
+          "id": 4,
+          "name": "Penthouse Suite",
+          "size": 80,
+          "beds": "2 King Beds + Living Area",
+          "maxGuests": 8,
+          "view": "Panoramic View",
+          "price": 350,
+          "available": false,
+          "image": "/cozy-mountain-cabin-interior.jpg",
+          "amenities": [
+            "TV",
+            "Air conditioning",
+            "WiFi",
+            "Minibar",
+            "Safe",
+            "Work desk",
+            "Jacuzzi",
+            "Private Pool"
+          ]
+        }
+      ],
+      "reviews": [
+        {
+          "id": 1,
+          "author": "John Doe",
+          "avatar": "JD",
+          "rating": 5,
+          "date": "2 weeks ago",
+          "text": "Amazing place! The view is incredible and the host is very responsive."
+        },
+        {
+          "id": 2,
+          "author": "Sarah Harris",
+          "avatar": "SH",
+          "rating": 4,
+          "date": "1 month ago",
+          "text": "Beautiful property with great amenities. Highly recommended!"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "title": "Grand Plaza Hotel",
+      "location": "New York, USA",
+      "rating": 4.8,
+      "reviewsCount": 542,
+      "description": "Luxury hotel in the heart of Manhattan with stunning city views, world-class dining, and exceptional service. Experience the best of NYC hospitality.",
+      "image": "/luxury-bedroom-with-modern-design.jpg",
+      "facilities": [
+        {
+          "icon": "Wifi",
+          "label": "WiFi",
+          "description": "Complimentary WiFi"
+        },
+        {
+          "icon": "Utensils",
+          "label": "Restaurant",
+          "description": "Fine dining"
+        },
+        {
+          "icon": "Dumbbell",
+          "label": "Fitness Center",
+          "description": "24/7 gym"
+        },
+        {
+          "icon": "Droplet",
+          "label": "Spa",
+          "description": "Full-service spa"
+        },
+        {
+          "icon": "Wind",
+          "label": "Air conditioning",
+          "description": "Climate control"
+        },
+        {
+          "icon": "Tv",
+          "label": "Smart TV",
+          "description": "65-inch 4K TV"
+        },
+        {
+          "icon": "Coffee",
+          "label": "Room Service",
+          "description": "24/7 available"
+        }
+      ],
+      "rooms": [
+        {
+          "id": 5,
+          "name": "Standard King",
+          "size": 32,
+          "beds": "1 King Bed",
+          "maxGuests": 2,
+          "view": "City View",
+          "price": 200,
+          "available": true,
+          "image": "/luxury-bedroom-with-modern-design.jpg",
+          "amenities": [
+            "Smart TV",
+            "Air conditioning",
+            "WiFi",
+            "Minibar",
+            "Safe",
+            "Work desk",
+            "Coffee maker"
+          ]
+        },
+        {
+          "id": 6,
+          "name": "Executive Suite",
+          "size": 55,
+          "beds": "1 King Bed + Sofa Bed",
+          "maxGuests": 3,
+          "view": "Skyline View",
+          "price": 320,
+          "available": true,
+          "image": "/modern-apartment-bedroom-with-plants.jpg",
+          "amenities": [
+            "Smart TV",
+            "Air conditioning",
+            "WiFi",
+            "Minibar",
+            "Safe",
+            "Work desk",
+            "Separate living area",
+            "Espresso machine"
+          ]
+        },
+        {
+          "id": 7,
+          "name": "Presidential Suite",
+          "size": 120,
+          "beds": "2 King Beds + Living Room",
+          "maxGuests": 6,
+          "view": "Panoramic City View",
+          "price": 850,
+          "available": true,
+          "image": "/cozy-mountain-cabin-interior.jpg",
+          "amenities": [
+            "Smart TV",
+            "Air conditioning",
+            "WiFi",
+            "Minibar",
+            "Safe",
+            "Work desk",
+            "Kitchen",
+            "Dining area",
+            "Private balcony",
+            "Butler service"
+          ]
+        }
+      ],
+      "reviews": [
+        {
+          "id": 3,
+          "author": "Michael Chen",
+          "avatar": "MC",
+          "rating": 5,
+          "date": "1 week ago",
+          "text": "Exceptional service and prime location. The staff went above and beyond to make our stay memorable."
+        },
+        {
+          "id": 4,
+          "author": "Emma Wilson",
+          "avatar": "EW",
+          "rating": 5,
+          "date": "3 weeks ago",
+          "text": "Absolutely stunning! The views from our suite were breathtaking."
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "title": "Seaside Paradise Resort",
+      "location": "Maldives",
+      "rating": 4.9,
+      "reviewsCount": 389,
+      "description": "Overwater bungalows with direct access to crystal-clear turquoise waters. Your private tropical paradise awaits with world-class amenities.",
+      "image": "/beach-house-with-pool-and-ocean-view.jpg",
+      "facilities": [
+        {
+          "icon": "Wifi",
+          "label": "WiFi",
+          "description": "High-speed WiFi"
+        },
+        {
+          "icon": "Utensils",
+          "label": "Dining",
+          "description": "Multiple restaurants"
+        },
+        {
+          "icon": "Droplet",
+          "label": "Water Sports",
+          "description": "Diving & snorkeling"
+        },
+        {
+          "icon": "Trees",
+          "label": "Beach Access",
+          "description": "Private beach"
+        },
+        {
+          "icon": "Wind",
+          "label": "Air conditioning",
+          "description": "Climate control"
+        },
+        {
+          "icon": "Coffee",
+          "label": "Butler Service",
+          "description": "Personal butler"
+        }
+      ],
+      "rooms": [
+        {
+          "id": 8,
+          "name": "Beach Villa",
+          "size": 85,
+          "beds": "1 King Bed",
+          "maxGuests": 2,
+          "view": "Beach View",
+          "price": 450,
+          "available": true,
+          "image": "/beach-house-with-pool-and-ocean-view.jpg",
+          "amenities": [
+            "WiFi",
+            "Air conditioning",
+            "Outdoor shower",
+            "Private deck",
+            "Minibar",
+            "Safe"
+          ]
+        },
+        {
+          "id": 9,
+          "name": "Overwater Bungalow",
+          "size": 95,
+          "beds": "1 King Bed",
+          "maxGuests": 2,
+          "view": "Ocean View",
+          "price": 600,
+          "available": true,
+          "image": "/luxury-bedroom-with-modern-design.jpg",
+          "amenities": [
+            "WiFi",
+            "Air conditioning",
+            "Glass floor panels",
+            "Private deck",
+            "Minibar",
+            "Safe",
+            "Direct ocean access"
+          ]
+        },
+        {
+          "id": 10,
+          "name": "Two Bedroom Water Villa",
+          "size": 180,
+          "beds": "2 King Beds",
+          "maxGuests": 4,
+          "view": "360° Ocean View",
+          "price": 1200,
+          "available": true,
+          "image": "/cozy-mountain-cabin-interior.jpg",
+          "amenities": [
+            "WiFi",
+            "Air conditioning",
+            "Private infinity pool",
+            "Glass floor panels",
+            "Private deck",
+            "Minibar",
+            "Safe",
+            "Butler service",
+            "Wine cellar"
+          ]
+        }
+      ],
+      "reviews": [
+        {
+          "id": 5,
+          "author": "David & Lisa",
+          "avatar": "DL",
+          "rating": 5,
+          "date": "5 days ago",
+          "text": "Our honeymoon was absolutely magical! The overwater bungalow exceeded all expectations."
+        },
+        {
+          "id": 6,
+          "author": "Robert Thompson",
+          "avatar": "RT",
+          "rating": 5,
+          "date": "2 weeks ago",
+          "text": "Paradise found! Incredible service, stunning location, unforgettable experience."
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "title": "Mountain View Lodge",
+      "location": "Swiss Alps, Switzerland",
+      "rating": 4.7,
+      "reviewsCount": 276,
+      "description": "Cozy alpine retreat with breathtaking mountain views. Perfect for ski enthusiasts and nature lovers seeking tranquility and adventure.",
+      "image": "/cozy-mountain-cabin-interior.jpg",
+      "facilities": [
+        {
+          "icon": "Wifi",
+          "label": "WiFi",
+          "description": "Free WiFi"
+        },
+        {
+          "icon": "Utensils",
+          "label": "Restaurant",
+          "description": "Alpine cuisine"
+        },
+        {
+          "icon": "Dumbbell",
+          "label": "Ski Storage",
+          "description": "Secure storage"
+        },
+        {
+          "icon": "Droplet",
+          "label": "Wellness Center",
+          "description": "Sauna & hot tub"
+        },
+        {
+          "icon": "Wind",
+          "label": "Fireplace",
+          "description": "In-room fireplace"
+        },
+        {
+          "icon": "Coffee",
+          "label": "Bar",
+          "description": "Mountain bar"
+        }
+      ],
+      "rooms": [
+        {
+          "id": 11,
+          "name": "Standard Mountain Room",
+          "size": 30,
+          "beds": "1 Queen Bed",
+          "maxGuests": 2,
+          "view": "Mountain View",
+          "price": 180,
+          "available": true,
+          "image": "/cozy-mountain-cabin-interior.jpg",
+          "amenities": [
+            "WiFi",
+            "Heating",
+            "Minibar",
+            "Safe",
+            "Balcony",
+            "Mountain view"
+          ]
+        },
+        {
+          "id": 12,
+          "name": "Deluxe Chalet",
+          "size": 70,
+          "beds": "1 King Bed + Sofa Bed",
+          "maxGuests": 4,
+          "view": "Panoramic Mountain View",
+          "price": 320,
+          "available": true,
+          "image": "/modern-apartment-bedroom-with-plants.jpg",
+          "amenities": [
+            "WiFi",
+            "Heating",
+            "Fireplace",
+            "Minibar",
+            "Safe",
+            "Private balcony",
+            "Kitchen",
+            "Living area"
+          ]
+        },
+        {
+          "id": 13,
+          "name": "Alpine Suite",
+          "size": 100,
+          "beds": "2 King Beds",
+          "maxGuests": 6,
+          "view": "Premium Mountain View",
+          "price": 550,
+          "available": false,
+          "image": "/luxury-bedroom-with-modern-design.jpg",
+          "amenities": [
+            "WiFi",
+            "Heating",
+            "Fireplace",
+            "Minibar",
+            "Safe",
+            "Private balcony",
+            "Full kitchen",
+            "Dining area",
+            "Hot tub",
+            "Wine cellar"
+          ]
+        }
+      ],
+      "reviews": [
+        {
+          "id": 7,
+          "author": "Sophie Martin",
+          "avatar": "SM",
+          "rating": 5,
+          "date": "1 week ago",
+          "text": "Perfect ski getaway! Cozy rooms with amazing mountain views and excellent service."
+        },
+        {
+          "id": 8,
+          "author": "James Anderson",
+          "avatar": "JA",
+          "rating": 4,
+          "date": "3 weeks ago",
+          "text": "Beautiful lodge with great facilities. The fireplace made our evenings extra special."
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "title": "Urban Boutique Hotel",
+      "location": "Tokyo, Japan",
+      "rating": 4.6,
+      "reviewsCount": 412,
+      "description": "Modern minimalist design meets Japanese hospitality. Located in vibrant Shibuya district with easy access to all major attractions.",
+      "image": "/modern-apartment-bedroom-with-plants.jpg",
+      "facilities": [
+        {
+          "icon": "Wifi",
+          "label": "WiFi",
+          "description": "High-speed WiFi"
+        },
+        {
+          "icon": "Utensils",
+          "label": "Restaurant",
+          "description": "Japanese fusion"
+        },
+        {
+          "icon": "Coffee",
+          "label": "Café",
+          "description": "Artisan coffee"
+        },
+        {
+          "icon": "Wind",
+          "label": "Air conditioning",
+          "description": "Climate control"
+        },
+        {
+          "icon": "Tv",
+          "label": "Smart TV",
+          "description": "Streaming services"
+        }
+      ],
+      "rooms": [
+        {
+          "id": 14,
+          "name": "Compact Room",
+          "size": 18,
+          "beds": "1 Double Bed",
+          "maxGuests": 2,
+          "view": "City View",
+          "price": 110,
+          "available": true,
+          "image": "/modern-apartment-bedroom-with-plants.jpg",
+          "amenities": [
+            "WiFi",
+            "Air conditioning",
+            "Smart TV",
+            "Minibar",
+            "Safe"
+          ]
+        },
+        {
+          "id": 15,
+          "name": "Superior Room",
+          "size": 28,
+          "beds": "1 King Bed",
+          "maxGuests": 2,
+          "view": "Shibuya View",
+          "price": 160,
+          "available": true,
+          "image": "/luxury-bedroom-with-modern-design.jpg",
+          "amenities": [
+            "WiFi",
+            "Air conditioning",
+            "Smart TV",
+            "Minibar",
+            "Safe",
+            "Work desk",
+            "Nespresso machine"
+          ]
+        },
+        {
+          "id": 16,
+          "name": "Executive Suite",
+          "size": 45,
+          "beds": "1 King Bed + Living Area",
+          "maxGuests": 3,
+          "view": "Premium City View",
+          "price": 280,
+          "available": true,
+          "image": "/beach-house-with-pool-and-ocean-view.jpg",
+          "amenities": [
+            "WiFi",
+            "Air conditioning",
+            "Smart TV",
+            "Minibar",
+            "Safe",
+            "Work desk",
+            "Kitchenette",
+            "Separate living area",
+            "Premium toiletries"
+          ]
+        }
+      ],
+      "reviews": [
+        {
+          "id": 9,
+          "author": "Yuki Tanaka",
+          "avatar": "YT",
+          "rating": 5,
+          "date": "4 days ago",
+          "text": "Perfect location in Shibuya! Clean, modern, and staff speaks excellent English."
+        },
+        {
+          "id": 10,
+          "author": "Alex Rivera",
+          "avatar": "AR",
+          "rating": 4,
+          "date": "2 weeks ago",
+          "text": "Great boutique hotel with minimalist design. Loved the attention to detail."
+        }
+      ]
+    }
+  ],
+  "bookings": [
+    {
+      "id": "21dd",
+      "hotelId": "1",
+      "roomId": 1,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 360,
+      "createdAt": "2025-10-31T02:44:53.023Z",
+      "status": "Cancelled",
+      "userId": "u001"
+    },
+    {
+      "id": "826f",
+      "userId": "a2b9",
+      "hotelId": 1,
+      "roomId": 1,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 414,
+      "createdAt": "2025-10-31T08:06:43.629Z",
+      "status": "Pending"
+    },
+    {
+      "id": "ec63",
+      "userId": "u001",
+      "hotelId": 1,
+      "roomId": 2,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 621,
+      "createdAt": "2025-10-31T08:07:46.830Z",
+      "status": "Pending"
+    },
+    {
+      "id": "b1da",
+      "userId": "a2b9",
+      "hotelId": 1,
+      "roomId": 3,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 759,
+      "createdAt": "2025-10-31T08:09:39.821Z",
+      "status": "Pending"
+    },
+    {
+      "id": "c3e4",
+      "userId": "u001",
+      "hotelId": 1,
+      "roomId": 1,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 414,
+      "createdAt": "2025-10-31T08:11:19.285Z",
+      "status": "Pending"
+    },
+    {
+      "id": "356d",
+      "userId": "u001",
+      "hotelId": 1,
+      "roomId": 1,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 414,
+      "createdAt": "2025-10-31T08:15:29.653Z",
+      "status": "Pending"
+    },
+    {
+      "id": "5d70",
+      "userId": "u001",
+      "hotelId": 1,
+      "roomId": 1,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 414,
+      "createdAt": "2025-10-31T08:25:30.037Z",
+      "status": "Cancelled"
+    },
+    {
+      "id": "0bdf",
+      "userId": "u001",
+      "hotelId": 1,
+      "roomId": 1,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 414,
+      "createdAt": "2025-10-31T08:34:41.084Z",
+      "status": "Cancelled"
+    },
+    {
+      "id": "4a77",
+      "userId": "1151",
+      "hotelId": 1,
+      "roomId": 2,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 621,
+      "createdAt": "2025-10-31T08:53:58.739Z",
+      "status": "Pending"
+    },
+    {
+      "id": "d441",
+      "userId": "1f62",
+      "hotelId": 1,
+      "roomId": 2,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 621,
+      "createdAt": "2025-10-31T09:12:29.082Z",
+      "status": "Pending"
+    },
+    {
+      "id": "4986",
+      "userId": "1f62",
+      "hotelId": 1,
+      "roomId": 3,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 759,
+      "createdAt": "2025-10-31T09:13:13.914Z",
+      "status": "Pending"
+    },
+    {
+      "id": "34c4",
+      "userId": "u001",
+      "hotelId": "1",
+      "roomId": 1,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 414,
+      "createdAt": "2025-11-04T03:28:20.820Z",
+      "status": "Pending"
+    },
+    {
+      "id": "3f8a",
+      "userId": "u001",
+      "hotelId": "1",
+      "roomId": 1,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 414,
+      "createdAt": "2025-11-04T08:51:51.320Z",
+      "status": "Pending"
+    },
+    {
+      "id": "31d9",
+      "userId": "u001",
+      "hotelId": "3",
+      "roomId": 10,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 4140,
+      "createdAt": "2025-11-04T08:52:26.975Z",
+      "status": "Pending"
+    },
+    {
+      "id": "9558",
+      "userId": "u001",
+      "hotelId": "1",
+      "roomId": 1,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 414,
+      "createdAt": "2025-11-04T08:52:49.992Z",
+      "status": "Cancelled"
+    },
+    {
+      "id": "0c38",
+      "userId": "u001",
+      "hotelId": "3",
+      "roomId": 8,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 1553,
+      "createdAt": "2025-11-04T09:10:55.087Z",
+      "status": "Pending"
+    },
+    {
+      "id": "aa8d",
+      "userId": "u001",
+      "hotelId": "1",
+      "roomId": 1,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 414,
+      "createdAt": "2025-11-04T09:12:05.783Z",
+      "status": "Pending"
+    },
+    {
+      "id": "33fc",
+      "userId": "u001",
+      "hotelId": "1",
+      "roomId": 1,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 414,
+      "createdAt": "2025-11-04T09:18:57.550Z",
+      "status": "Pending"
+    },
+    {
+      "id": "5293",
+      "userId": "u001",
+      "hotelId": "2",
+      "roomId": 5,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 690,
+      "createdAt": "2025-11-04T09:28:52.734Z",
+      "status": "Pending"
+    },
+    {
+      "id": "3b1c",
+      "userId": "u001",
+      "hotelId": "2",
+      "roomId": 5,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 690,
+      "createdAt": "2025-11-04T09:37:26.021Z",
+      "status": "Pending"
+    },
+    {
+      "id": "8b07",
+      "userId": "u001",
+      "hotelId": "5",
+      "roomId": 14,
+      "checkIn": "2024-12-20",
+      "checkOut": "2024-12-23",
+      "total": 380,
+      "createdAt": "2025-11-04T09:38:04.557Z",
+      "status": "Pending"
+    }
+  ],
+  "favorites": [
+    {
+      "id": "fav001",
+      "userId": "u001",
+      "propertyId": 1
+    },
+    {
+      "id": "fav003",
+      "userId": "u002",
+      "propertyId": 2
+    },
+    {
+      "id": "99a1",
+      "userId": "u001",
+      "propertyId": 1
+    },
+    {
+      "id": "3cf0",
+      "userId": "u001",
+      "propertyId": 1
+    }
+  ]
+}
