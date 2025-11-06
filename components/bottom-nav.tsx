@@ -1,6 +1,6 @@
 "use client"
 
-import { Home, MapPin, Heart, User, Bookmark } from "lucide-react"
+import { Home, Heart, User, Bookmark } from "lucide-react"
 
 interface BottomNavProps {
   activeTab: string
@@ -10,7 +10,6 @@ interface BottomNavProps {
 export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   const tabs = [
     { id: "home", icon: Home, label: "Home" },
-    { id: "map", icon: MapPin, label: "Map" },
     { id: "bookings", icon: Bookmark, label: "Bookings" },
     { id: "favorites", icon: Heart, label: "Favorites" },
     { id: "profile", icon: User, label: "Profile" },

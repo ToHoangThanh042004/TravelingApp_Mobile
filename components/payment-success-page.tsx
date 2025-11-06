@@ -31,6 +31,7 @@ interface Hotel {
 interface PaymentSuccessPageProps {
   bookingId: string
   onBackHome: () => void
+  onViewBooking: () => void 
 }
 
 export function PaymentSuccessPage({ bookingId, onBackHome }: PaymentSuccessPageProps) {

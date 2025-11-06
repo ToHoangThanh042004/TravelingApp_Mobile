@@ -4,6 +4,7 @@ import { ChevronLeft, Heart } from "lucide-react"
 import { PropertyCard } from "@/components/property-card"
 
 interface FavoritesPageProps {
+  
   favorites: any[]
   onBack: () => void
   onToggleFavorite: (id: string) => void

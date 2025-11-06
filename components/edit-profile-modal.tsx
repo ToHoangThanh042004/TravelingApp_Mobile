@@ -4,7 +4,7 @@ import { useState, useRef } from "react"
 import { motion } from "framer-motion"
 
 export type User = {
-  id: number | string
+  id: string
   phoneNumber?: string
   name?: string
   avatar?: string

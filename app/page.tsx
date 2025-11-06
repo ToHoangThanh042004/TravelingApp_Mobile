@@ -10,7 +10,6 @@ import { BookingConfirmationPage } from "@/components/booking-confirmation-page"
 import { PaymentSuccessPage } from "@/components/payment-success-page"
 import { FavoritesPage } from "@/components/favorites-page"
 import { MyBookingsPage } from "@/components/my-bookings-page"
-
 type PageType =
   | "auth"
   | "home"
@@ -22,7 +21,6 @@ type PageType =
   | "favorites"
   | "my-bookings"
 
-// Định nghĩa interface cho dữ liệu từ db.json
 interface Hotel {
   id: string
   title: string
@@ -42,7 +40,10 @@ interface Hotel {
     price: number
     available: boolean
     image: string
+    images?: string[]
+    description?: string
     amenities: string[]
+    policies?: string[]
   }[]
   reviews: {
     id: number
@@ -54,7 +55,6 @@ interface Hotel {
   }[]
 }
 
-// Định nghĩa interface cho PropertyCard và PropertyDetailPage
 interface Property {
   id: string
   title: string
@@ -78,6 +78,23 @@ interface Property {
   }[]
 }
 
+interface BookingData {
+  hotelId: string
+  roomId: number
+  hotelName: string
+  roomName: string
+  roomImage: string
+  checkIn: string
+  checkOut: string
+  nights: number
+  pricePerNight: number
+  subtotal: number
+  tax: number
+  serviceFee: number
+  total: number
+  location: string
+}
+
 export default function Page() {
   const [currentPage, setCurrentPage] = useState<PageType>("auth")
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -86,42 +103,70 @@ export default function Page() {
   const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null)
   const [favorites, setFavorites] = useState<string[]>([])
   const [properties, setProperties] = useState<Property[]>([])
-  const [hotels, setHotels] = useState<Hotel[]>([]) // Thêm state để lưu hotels gốc
+  const [hotels, setHotels] = useState<Hotel[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [selectedBookingId, setSelectedBookingId] = useState<string>(null);
+  const [bookingData, setBookingData] = useState<BookingData | null>(null)
+  const [completedBookingId, setCompletedBookingId] = useState<string | null>(null)
 
+  const API_URL = "http://localhost:3001"
 
-  // Giả sử userId hiện tại
-  const CURRENT_USER_ID = "u001" // Phải khớp với userId trong HotelDetailPage.tsx
+  // Get current user ID from localStorage
+  const getCurrentUserId = () => {
+    const storedUser = localStorage.getItem("authUser")
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser)
+        return user.id
+      } catch {
+        return "u001" // fallback
+      }
+    }
+    return "u001" // fallback
+  }
 
-  // Fetch dữ liệu từ db.json
+  // Check authentication on mount
   useEffect(() => {
+    const checkAuth = () => {
+      const storedUser = localStorage.getItem("authUser")
+      if (storedUser) {
+        setIsAuthenticated(true)
+        setCurrentPage("home")
+      }
+    }
+    checkAuth()
+  }, [])
+
+  // Fetch data from db.json
+  useEffect(() => {
+    if (!isAuthenticated) return
+
     const fetchData = async () => {
       try {
         setIsLoading(true)
+        const userId = getCurrentUserId()
 
-        // Lấy danh sách khách sạn
-        const hotelsResponse = await fetch("http://localhost:3001/hotels")
+        // Fetch hotels
+        const hotelsResponse = await fetch(`${API_URL}/hotels`)
         if (!hotelsResponse.ok) throw new Error("Failed to fetch hotels")
         const hotelsData: Hotel[] = await hotelsResponse.json()
 
-        // Lấy danh sách yêu thích
-        const favoritesResponse = await fetch(`http://localhost:3001/favorites?userId=${CURRENT_USER_ID}`)
+        // Fetch favorites
+        const favoritesResponse = await fetch(`${API_URL}/favorites?userId=${userId}`)
         if (!favoritesResponse.ok) throw new Error("Failed to fetch favorites")
         const favoritesData = await favoritesResponse.json()
         const favoriteIds = favoritesData.map((fav: { propertyId: string }) => fav.propertyId.toString())
 
-        // Định dạng dữ liệu cho PropertyCard và PropertyDetailPage
+        // Format data for PropertyCard
         const formattedProperties: Property[] = hotelsData.map((hotel) => ({
           id: hotel.id,
           title: hotel.title,
           location: hotel.location,
-          price: hotel.rooms[0]?.price || 0, // Lấy giá của phòng đầu tiên
+          price: hotel.rooms[0]?.price || 0,
           rating: hotel.rating,
           reviewsCount: hotel.reviewsCount,
           image: hotel.image,
-          type: "Hotel", // Giá trị mặc định vì db.json không có trường type
+          type: "Hotel",
           beds: hotel.rooms.reduce((total: number, room) => {
             const match = room.beds.match(/\d+/)
             return total + (match ? parseInt(match[0]) : 0)
@@ -132,7 +177,7 @@ export default function Page() {
           reviews: hotel.reviews,
         }))
 
-        setHotels(hotelsData) // Lưu dữ liệu hotels gốc
+        setHotels(hotelsData)
         setProperties(formattedProperties)
         setFavorites(favoriteIds)
       } catch (err: any) {
@@ -144,7 +189,7 @@ export default function Page() {
     }
 
     fetchData()
-  }, [])
+  }, [isAuthenticated])
 
   const handleAuthenticate = () => {
     setIsAuthenticated(true)
@@ -170,53 +215,118 @@ export default function Page() {
     setCurrentPage("my-bookings")
   }
 
-  const handleBooking = () => {
+  const handleProceedToPayment = (data: BookingData) => {
+    setBookingData(data)
     setCurrentPage("booking-confirmation")
   }
 
-  const handleConfirmBooking = () => {
-    setCurrentPage("payment-success")
+  const handleConfirmPayment = async (paymentMethod: string, paymentDetails: any) => {
+    try {
+      if (!bookingData) {
+        alert("Lỗi: Không tìm thấy thông tin đặt phòng!")
+        return
+      }
+
+      const userId = getCurrentUserId()
+
+      // Create booking object
+      const newBooking = {
+        userId: userId,
+        hotelId: bookingData.hotelId,
+        roomId: bookingData.roomId,
+        checkIn: bookingData.checkIn,
+        checkOut: bookingData.checkOut,
+        nights: bookingData.nights,
+        subtotal: bookingData.subtotal,
+        tax: bookingData.tax,
+        serviceFee: bookingData.serviceFee,
+        total: bookingData.total,
+        createdAt: new Date().toISOString(),
+        status: "Confirmed",
+        paymentMethod: paymentMethod,
+        paymentDetails: paymentDetails
+      }
+
+      // Save booking to database
+      const response = await fetch(`${API_URL}/bookings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newBooking),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to create booking")
+      }
+
+      const savedBooking = await response.json()
+      setCompletedBookingId(savedBooking.id)
+      setCurrentPage("payment-success")
+    } catch (error) {
+      console.error("Error creating booking:", error)
+      alert("Đặt phòng thất bại! Vui lòng thử lại.")
+    }
   }
 
   const handleBackHome = () => {
     setCurrentPage("home")
+    setSelectedPropertyId(null)
+    setSelectedHotelId(null)
+    setSelectedRoomId(null)
+    setBookingData(null)
+    setCompletedBookingId(null)
+  }
+
+  const handleBackToHotel = () => {
+    setCurrentPage("hotel-detail")
+    setSelectedRoomId(null)
+  }
+
+  const handleBackToRoom = () => {
+    setCurrentPage("room-detail")
   }
 
   const handleViewFavorites = () => {
     setCurrentPage("favorites")
   }
 
+  const handleViewBooking = () => {
+    setCurrentPage("my-bookings")
+  }
   const toggleFavorite = async (id: string) => {
     try {
+      const userId = getCurrentUserId()
       const isFavorite = favorites.includes(id)
+
       if (isFavorite) {
-        // Xóa khỏi danh sách yêu thích
+        // Remove from favorites
         const favoriteResponse = await fetch(
-          `http://localhost:3001/favorites?userId=${CURRENT_USER_ID}&propertyId=${id}`
+          `${API_URL}/favorites?userId=${userId}&propertyId=${id}`
         )
         const favoriteData = await favoriteResponse.json()
         if (favoriteData[0]) {
-          await fetch(`http://localhost:3001/favorites/${favoriteData[0].id}`, {
+          await fetch(`${API_URL}/favorites/${favoriteData[0].id}`, {
             method: "DELETE",
           })
         }
         setFavorites((prev) => prev.filter((fav) => fav !== id))
       } else {
-        // Thêm vào danh sách yêu thích
-        await fetch("http://localhost:3001/favorites", {
+        // Add to favorites
+        await fetch(`${API_URL}/favorites`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            userId: CURRENT_USER_ID,
-            propertyId: id, // Sử dụng id trực tiếp vì propertyId trong db.json là chuỗi
+            userId: userId,
+            propertyId: id,
           }),
         })
         setFavorites((prev) => [...prev, id])
       }
 
-      // Cập nhật trạng thái isFavorite trong properties
+      // Update isFavorite status in properties
       setProperties((prev) =>
         prev.map((prop) => (prop.id === id ? { ...prop, isFavorite: !prop.isFavorite } : prop))
       )
@@ -225,12 +335,8 @@ export default function Page() {
     }
   }
 
-  const handleBackToHotel = () => {
-    setCurrentPage("hotel-detail")
-  }
-
-  // Xử lý trạng thái loading
-  if (isLoading) {
+  // Loading state
+  if (isLoading && currentPage !== "auth") {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -241,7 +347,7 @@ export default function Page() {
     )
   }
 
-  // Xử lý trạng thái lỗi
+  // Error state
   if (error) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -262,6 +368,7 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-background">
       {currentPage === "auth" && <AuthPage onAuthenticate={handleAuthenticate} />}
+      
       {currentPage === "home" && (
         <HomePage
           onViewProperty={handleViewProperty}
@@ -273,40 +380,65 @@ export default function Page() {
           onToggleFavorite={toggleFavorite}
         />
       )}
+      
       {currentPage === "property-detail" && selectedPropertyId && (
         <PropertyDetailPage
           propertyId={selectedPropertyId}
           onBack={handleBackHome}
-          onBooking={handleBooking}
+          onBooking={() => handleProceedToPayment(bookingData!)}
         />
       )}
+      
       {currentPage === "hotel-detail" && selectedHotelId && (
         <HotelDetailPage
           hotelId={selectedHotelId}
-          hotel={hotels.find((h) => h.id === selectedHotelId) || null} // Truyền hotel trực tiếp
+          hotel={hotels.find((h) => h.id === selectedHotelId) || null}
           onBack={handleBackHome}
           onSelectRoom={handleSelectRoom}
+          onToggleFavorite={toggleFavorite}
         />
       )}
+      
       {currentPage === "room-detail" && selectedHotelId && selectedRoomId && (
         <RoomDetailPage
           hotelId={selectedHotelId}
           roomId={selectedRoomId}
           onBack={handleBackToHotel}
-          onBooking={handleBooking}
+          onProceedToPayment={handleProceedToPayment}
         />
       )}
-      {currentPage === "booking-confirmation" && (
-        <BookingConfirmationPage onBack={handleBackHome} onConfirm={handleConfirmBooking} />
+      
+      {currentPage === "booking-confirmation" && bookingData && (
+        <BookingConfirmationPage
+          onBack={handleBackToRoom}
+          onConfirm={handleConfirmPayment}
+          bookingData={bookingData}
+        />
       )}
-      {currentPage === "payment-success" && (
-  <PaymentSuccessPage 
-    bookingId={selectedBookingId} 
-    onBackHome={handleBackHome} 
-  />
-)}
-
-      {currentPage === "my-bookings" && <MyBookingsPage onBack={handleBackHome} />}
+      
+      {currentPage === "payment-success" && completedBookingId && (
+        <PaymentSuccessPage
+          bookingId={completedBookingId}
+          onBackHome={handleBackHome}
+          onViewBooking={handleViewBooking}
+        />
+      )}
+      
+      {currentPage === "favorites" && (
+        <FavoritesPage
+          onBack={handleBackHome}
+          favorites={favorites}
+          onToggleFavorite={toggleFavorite}
+        />
+      )}
+      
+      {currentPage === "my-bookings" && (
+        <MyBookingsPage
+          onBack={handleBackHome}
+          userId={getCurrentUserId()}
+          apiUrl={API_URL}
+        />
+      )}
     </div>
   )
 }

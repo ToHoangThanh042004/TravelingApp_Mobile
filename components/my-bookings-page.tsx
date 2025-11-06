@@ -1,9 +1,64 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ChevronLeft, MapPin, Calendar, DollarSign, MessageCircle, RotateCcw, Star, X, Loader2 } from "lucide-react"
+import { ChevronLeft, MapPin, Calendar, DollarSign, Star, X, Loader2 } from "lucide-react"
 
 interface Booking {
+  id: string
+  userId: string
+  hotelId: string
+  roomId: number
+  checkIn: string
+  checkOut: string
+  nights: number
+  subtotal: number
+  tax: number
+  serviceFee: number
+  total: number
+  createdAt: string
+  status: string
+  paymentMethod: string
+  paymentDetails?: any
+  rating?: number
+  review?: string
+}
+
+interface Hotel {
+  id: string
+  title: string
+  location: string
+  image: string
+  rooms: Room[]
+  reviews: Review[]
+  reviewsCount: number
+}
+
+interface Room {
+  id: number
+  name: string
+  image: string
+  price: number
+}
+
+interface User {
+  id: string
+  name: string
+  phoneNumber: string
+  email?: string
+}
+
+interface Review {
+  id: number
+  author: string
+  avatar: string
+  rating: number
+  date: string
+  text: string
+  userId?: string
+  bookingId?: string
+}
+
+interface DisplayBooking {
   id: string
   propertyName: string
   location: string
@@ -11,7 +66,7 @@ interface Booking {
   checkIn: string
   checkOut: string
   totalPrice: number
-  status: "pending" | "confirmed" | "checked-in" | "completed" | "cancelled"
+  status: string
   bookingId: string
   address: string
   roomType: string
@@ -19,43 +74,52 @@ interface Booking {
   pricePerNight: number
   guestName: string
   guestPhone: string
+  guestEmail?: string
   rating?: number
   review?: string
+  subtotal: number
+  tax: number
+  serviceFee: number
+  paymentMethod: string
+  paymentDetails?: any
+  createdAt: string
 }
 
 interface MyBookingsPageProps {
   onBack: () => void
   onViewDetails?: (bookingId: string) => void
-  userId?: string // ID của user đang đăng nhập
-  apiUrl?: string // URL của JSON Server API
+  userId?: string
+  apiUrl?: string
 }
 
 const STATUS_CONFIG = {
-  pending: { label: "Chờ xác nhận", color: "bg-yellow-100 text-yellow-800", icon: "🕒" },
-  confirmed: { label: "Đã xác nhận", color: "bg-green-100 text-green-800", icon: "✅" },
-  "checked-in": { label: "Đang ở", color: "bg-blue-100 text-blue-800", icon: "🏠" },
-  completed: { label: "Đã hoàn tất", color: "bg-gray-100 text-gray-800", icon: "✔️" },
-  cancelled: { label: "Đã hủy", color: "bg-red-100 text-red-800", icon: "❌" },
+  Pending: { label: "Chờ xác nhận", color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200" },
+  Confirmed: { label: "Đã xác nhận", color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" },
+  "Checked-in": { label: "Đang ở", color: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" },
+  Completed: { label: "Đã hoàn tất", color: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200" },
+  Cancelled: { label: "Đã hủy", color: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200" },
 }
 
 export function MyBookingsPage({ 
   onBack, 
   onViewDetails,
-  userId = "u001", // Default user ID
-  apiUrl = "http://localhost:3001" // Default API URL
+  userId = "u001",
+  apiUrl = "http://localhost:3001"
 }: MyBookingsPageProps) {
-  const [activeFilter, setActiveFilter] = useState<
-    "all" | "pending" | "confirmed" | "checked-in" | "completed" | "cancelled"
-  >("all")
-  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
-  const [bookings, setBookings] = useState<Booking[]>([])
+  const [activeFilter, setActiveFilter] = useState<string>("all")
+  const [selectedBooking, setSelectedBooking] = useState<DisplayBooking | null>(null)
+  const [bookings, setBookings] = useState<DisplayBooking[]>([])
   const [searchQuery, setSearchQuery] = useState("")
-  const [userRatings, setUserRatings] = useState<Record<string, { rating: number; review: string }>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [currentUser, setCurrentUser] = useState<any>(null)
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
 
-  // Fetch bookings từ API
+  const canCancelBooking = (booking: DisplayBooking) => {
+    const createdAt = new Date(booking.createdAt).getTime()
+    const now = Date.now()
+    return now - createdAt <= 12 * 60 * 60 * 1000
+  }
+
   useEffect(() => {
     fetchBookings()
     fetchUserInfo()
@@ -78,53 +142,52 @@ export function MyBookingsPage({
       setLoading(true)
       setError(null)
 
-      // Lấy bookings của user
-      // const bookingsResponse = await fetch(`${apiUrl}/bookings?userId=${userId}`)
-      // const userBookings = await bookingsResponse.json()
+      const [bookingsRes, hotelsRes] = await Promise.all([
+        fetch(`${apiUrl}/bookings`),
+        fetch(`${apiUrl}/hotels`)
+      ])
 
-      // Lấy thông tin hotels
-      const hotelsResponse = await fetch(`${apiUrl}/hotels`)
-      const hotels = await hotelsResponse.json()
-      // Lấy tất cả bookings và lọc theo userId
-      const bookingsResponse = await fetch(`${apiUrl}/bookings`)
-      const allBookings = await bookingsResponse.json()
-      
-      // Lọc bookings của user hiện tại - chuyển về string để so sánh
-      const userBookings = allBookings.filter((booking: any) => {
-        return String(booking.userId) === String(userId)
+      const allBookings: Booking[] = await bookingsRes.json()
+      const hotels: Hotel[] = await hotelsRes.json()
+
+      const userBookings = allBookings.filter((booking) => 
+        String(booking.userId) === String(userId)
+      )
+
+      const formattedBookings: DisplayBooking[] = userBookings.map((booking) => {
+        const hotel = hotels.find((h) => h.id === String(booking.hotelId))
+        const room = hotel?.rooms?.find((r) => r.id === booking.roomId)
+
+        return {
+          id: booking.id,
+          propertyName: hotel?.title || "Unknown Hotel",
+          location: hotel?.location || "Unknown Location",
+          image: room?.image || hotel?.image || "/placeholder.svg",
+          checkIn: booking.checkIn,
+          checkOut: booking.checkOut,
+          totalPrice: booking.total,
+          status: booking.status,
+          bookingId: `BK${booking.id.toUpperCase()}`,
+          address: hotel?.location || "Unknown Address",
+          roomType: room?.name || "Standard Room",
+          nights: booking.nights || 1,
+          pricePerNight: room?.price || Math.floor(booking.total / (booking.nights || 1)),
+          guestName: currentUser?.name || "Guest",
+          guestPhone: currentUser?.phoneNumber || "N/A",
+          guestEmail: currentUser?.email,
+          rating: booking.rating,
+          review: booking.review,
+          subtotal: booking.subtotal,
+          tax: booking.tax,
+          serviceFee: booking.serviceFee,
+          paymentMethod: booking.paymentMethod,
+          paymentDetails: booking.paymentDetails,
+          createdAt: booking.createdAt,
+        }
       })
 
-      // Kết hợp dữ liệu bookings với hotels
-      const formattedBookings: Booking[] = await Promise.all(
-        userBookings.map(async (booking: any) => {
-          const hotel = hotels.find((h: any) => h.id === String(booking.hotelId))
-          const room = hotel?.rooms?.find((r: any) => r.id === booking.roomId)
-
-          // Tính số đêm
-          const checkInDate = new Date(booking.checkIn)
-          const checkOutDate = new Date(booking.checkOut)
-          const nights = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 3600 * 24))
-
-          return {
-            id: booking.id,
-            propertyName: hotel?.title || "Unknown Hotel",
-            location: hotel?.location || "Unknown Location",
-            image: room?.image || hotel?.image || "/placeholder.svg",
-            checkIn: booking.checkIn,
-            checkOut: booking.checkOut,
-            totalPrice: booking.total,
-            status: booking.status?.toLowerCase() || "pending",
-            bookingId: `BK${booking.id.toUpperCase()}`,
-            address: hotel?.location || "Unknown Address",
-            roomType: room?.name || "Standard Room",
-            nights: nights,
-            pricePerNight: room?.price || Math.floor(booking.total / nights),
-            guestName: currentUser?.name || "Guest",
-            guestPhone: currentUser?.phoneNumber || "N/A",
-            rating: booking.rating,
-            review: booking.review,
-          }
-        })
+      formattedBookings.sort((a, b) => 
+        new Date(b.checkIn).getTime() - new Date(a.checkIn).getTime()
       )
 
       setBookings(formattedBookings)
@@ -144,34 +207,84 @@ export function MyBookingsPage({
     return matchesFilter && matchesSearch
   })
 
-  const handleRateBooking = async (bookingId: string, rating: number, review: string) => {
+  const handleRateBooking = async (bookingId: string, hotelId: string, rating: number, reviewText: string) => {
     try {
-      // Cập nhật rating vào database
+      if (!currentUser) {
+        alert("Không tìm thấy thông tin người dùng!")
+        return
+      }
+
+      // 1. Cập nhật booking với rating và review
       await fetch(`${apiUrl}/bookings/${bookingId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ rating, review }),
+        body: JSON.stringify({ rating, review: reviewText }),
       })
 
-      setUserRatings((prev) => ({
-        ...prev,
-        [bookingId]: { rating, review },
-      }))
-      
-      // Refresh bookings
-      fetchBookings()
+      // 2. Lấy thông tin hotel hiện tại
+      const hotelResponse = await fetch(`${apiUrl}/hotels/${hotelId}`)
+      if (!hotelResponse.ok) throw new Error("Failed to fetch hotel")
+      const hotel: Hotel = await hotelResponse.json()
+
+      // 3. Tạo review mới với ID tự động tăng
+      const newReviewId = hotel.reviews.length > 0 
+        ? Math.max(...hotel.reviews.map(r => r.id)) + 1 
+        : 1
+
+      const newReview: Review = {
+        id: newReviewId,
+        author: currentUser.name || "Guest",
+        avatar: currentUser.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || "GU",
+        rating: rating,
+        date: new Date().toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric' 
+        }),
+        text: reviewText,
+        userId: currentUser.id,
+        bookingId: bookingId
+      }
+
+      // 4. Cập nhật hotel với review mới và reviewsCount
+      const updatedReviews = [...hotel.reviews, newReview]
+      const updatedReviewsCount = updatedReviews.length
+
+      // Tính lại rating trung bình
+      const totalRating = updatedReviews.reduce((sum, r) => sum + r.rating, 0)
+      const newAverageRating = Math.round((totalRating / updatedReviewsCount) * 10) / 10
+
+      await fetch(`${apiUrl}/hotels/${hotelId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          reviews: updatedReviews,
+          reviewsCount: updatedReviewsCount,
+          rating: newAverageRating
+        }),
+      })
+
+      // 5. Refresh bookings để cập nhật UI
+      await fetchBookings()
       setSelectedBooking(null)
+      
+      alert("✅ Đánh giá của bạn đã được gửi thành công!")
     } catch (err) {
       console.error("Error rating booking:", err)
-      alert("Không thể gửi đánh giá. Vui lòng thử lại.")
+      alert("❌ Không thể gửi đánh giá. Vui lòng thử lại.")
     }
   }
 
   const handleCancelBooking = async (bookingId: string) => {
+    if (!confirm("Bạn có chắc chắn muốn hủy đặt phòng này?")) {
+      return
+    }
+
     try {
-      // Cập nhật status thành cancelled
       await fetch(`${apiUrl}/bookings/${bookingId}`, {
         method: "PATCH",
         headers: {
@@ -180,18 +293,12 @@ export function MyBookingsPage({
         body: JSON.stringify({ status: "Cancelled" }),
       })
 
-      // Refresh bookings
       fetchBookings()
       setSelectedBooking(null)
     } catch (err) {
       console.error("Error cancelling booking:", err)
       alert("Không thể hủy đặt phòng. Vui lòng thử lại.")
     }
-  }
-
-  const handleRebooking = (booking: Booking) => {
-    console.log("Rebooking:", booking)
-    // Implement rebooking logic here
   }
 
   if (loading) {
@@ -251,14 +358,14 @@ export function MyBookingsPage({
           <div className="flex gap-2 min-w-max">
             {[
               { key: "all", label: "Tất cả" },
-              { key: "pending", label: "Chờ xác nhận" },
-              { key: "confirmed", label: "Đã xác nhận" },
-              { key: "completed", label: "Đã hoàn tất" },
-              { key: "cancelled", label: "Đã hủy" },
+              { key: "Pending", label: "Chờ xác nhận" },
+              { key: "Confirmed", label: "Đã xác nhận" },
+              { key: "Completed", label: "Đã hoàn tất" },
+              { key: "Cancelled", label: "Đã hủy" },
             ].map((filter) => (
               <button
                 key={filter.key}
-                onClick={() => setActiveFilter(filter.key as any)}
+                onClick={() => setActiveFilter(filter.key)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
                   activeFilter === filter.key
                     ? "bg-cyan-500 text-white shadow-md"
@@ -292,9 +399,7 @@ export function MyBookingsPage({
               key={booking.id}
               className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-200"
             >
-              {/* Booking Card */}
               <div className="flex gap-4 p-4">
-                {/* Image */}
                 <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
                   <img
                     src={booking.image || "/placeholder.svg"}
@@ -303,14 +408,11 @@ export function MyBookingsPage({
                   />
                 </div>
 
-                {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <h3 className="font-bold text-gray-900 text-sm line-clamp-2">{booking.propertyName}</h3>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${STATUS_CONFIG[booking.status].color}`}
-                    >
-                      {STATUS_CONFIG[booking.status].label}
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${STATUS_CONFIG[booking.status as keyof typeof STATUS_CONFIG]?.color || STATUS_CONFIG.Pending.color}`}>
+                      {STATUS_CONFIG[booking.status as keyof typeof STATUS_CONFIG]?.label || booking.status}
                     </span>
                   </div>
 
@@ -337,7 +439,6 @@ export function MyBookingsPage({
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="border-t border-gray-200 px-4 py-3 flex gap-2">
                 <button
                   onClick={() => setSelectedBooking(booking)}
@@ -346,21 +447,23 @@ export function MyBookingsPage({
                   Xem chi tiết
                 </button>
 
-                {booking.status === "pending" || booking.status === "confirmed" ? (
+                {canCancelBooking(booking) && (
                   <button
                     onClick={() => handleCancelBooking(booking.id)}
                     className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
                   >
                     Hủy đặt
                   </button>
-                ) : booking.status === "completed" ? (
+                )}
+
+                {booking.status === "Completed" && !booking.rating && (
                   <button
                     onClick={() => setSelectedBooking(booking)}
                     className="flex-1 px-3 py-2 bg-yellow-50 text-yellow-600 rounded-lg text-sm font-medium hover:bg-yellow-100 transition-colors"
                   >
                     Đánh giá
                   </button>
-                ) : null}
+                )}
               </div>
             </div>
           ))
@@ -369,156 +472,172 @@ export function MyBookingsPage({
 
       {/* Booking Detail Modal */}
       {selectedBooking && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-end animate-in fade-in">
-          <div className="w-full bg-white rounded-t-2xl max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom">
-            {/* Modal Header */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 flex items-center justify-between p-4 rounded-t-2xl">
-              <h2 className="text-lg font-bold text-gray-900">Chi tiết đơn đặt</h2>
-              <button
-                onClick={() => setSelectedBooking(null)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5 text-gray-600" />
-              </button>
+        <BookingDetailModal
+          booking={selectedBooking}
+          onClose={() => setSelectedBooking(null)}
+          onRate={(rating, review) => {
+            // Tìm hotelId từ bookings gốc
+            const originalBooking = bookings.find(b => b.id === selectedBooking.id)
+            if (originalBooking) {
+              // Extract hotelId từ booking (cần thêm vào DisplayBooking hoặc lấy từ API)
+              fetch(`${apiUrl}/bookings/${selectedBooking.id}`)
+                .then(res => res.json())
+                .then(booking => {
+                  handleRateBooking(selectedBooking.id, booking.hotelId, rating, review)
+                })
+            }
+          }}
+          onCancel={() => handleCancelBooking(selectedBooking.id)}
+          canCancel={canCancelBooking(selectedBooking)}
+        />
+      )}
+    </div>
+  )
+}
+
+// Booking Detail Modal Component
+function BookingDetailModal({
+  booking,
+  onClose,
+  onRate,
+  onCancel,
+  canCancel
+}: {
+  booking: DisplayBooking
+  onClose: () => void
+  onRate: (rating: number, review: string) => void
+  onCancel: () => void
+  canCancel: boolean
+}) {
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-end animate-in fade-in">
+      <div className="w-full bg-white rounded-t-2xl max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom">
+        <div className="sticky top-0 bg-white border-b border-gray-200 flex items-center justify-between p-4 rounded-t-2xl">
+          <h2 className="text-lg font-bold text-gray-900">Chi tiết đơn đặt</h2>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <X className="w-5 h-5 text-gray-600" />
+          </button>
+        </div>
+
+        <div className="p-4 space-y-6">
+          <div>
+            <img
+              src={booking.image || "/placeholder.svg"}
+              alt={booking.propertyName}
+              className="w-full h-48 object-cover rounded-lg mb-4"
+            />
+            <h3 className="text-lg font-bold text-gray-900 mb-2">{booking.propertyName}</h3>
+            <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+              <MapPin className="w-4 h-4" />
+              {booking.address}
             </div>
+          </div>
 
-            <div className="p-4 space-y-6">
-              {/* Property Info */}
-              <div>
-                <img
-                  src={selectedBooking.image || "/placeholder.svg"}
-                  alt={selectedBooking.propertyName}
-                  className="w-full h-48 object-cover rounded-lg mb-4"
-                />
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{selectedBooking.propertyName}</h3>
-                <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-                  <MapPin className="w-4 h-4" />
-                  {selectedBooking.address}
-                </div>
+          <div className="space-y-3">
+            <h4 className="font-bold text-gray-900">Thông tin đặt phòng</h4>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-gray-600 text-xs mb-1">Nhận phòng</p>
+                <p className="font-semibold text-gray-900">{booking.checkIn}</p>
               </div>
-
-              {/* Booking Details */}
-              <div className="space-y-3">
-                <h4 className="font-bold text-gray-900">Thông tin đặt phòng</h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-gray-600 text-xs mb-1">Nhận phòng</p>
-                    <p className="font-semibold text-gray-900">{selectedBooking.checkIn}</p>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-gray-600 text-xs mb-1">Trả phòng</p>
-                    <p className="font-semibold text-gray-900">{selectedBooking.checkOut}</p>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-gray-600 text-xs mb-1">Loại phòng</p>
-                    <p className="font-semibold text-gray-900">{selectedBooking.roomType}</p>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-gray-600 text-xs mb-1">Số đêm</p>
-                    <p className="font-semibold text-gray-900">{selectedBooking.nights} đêm</p>
-                  </div>
-                </div>
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-gray-600 text-xs mb-1">Trả phòng</p>
+                <p className="font-semibold text-gray-900">{booking.checkOut}</p>
               </div>
-
-              {/* Price Breakdown */}
-              <div className="space-y-3">
-                <h4 className="font-bold text-gray-900">Chi tiết thanh toán</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">
-                      ${selectedBooking.pricePerNight.toLocaleString()} × {selectedBooking.nights} đêm
-                    </span>
-                    <span className="font-semibold text-gray-900">
-                      ${(selectedBooking.pricePerNight * selectedBooking.nights).toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Phí dịch vụ</span>
-                    <span className="font-semibold text-gray-900">$0</span>
-                  </div>
-                  <div className="border-t border-gray-200 pt-2 flex justify-between">
-                    <span className="font-bold text-gray-900">Tổng cộng</span>
-                    <span className="font-bold text-cyan-600 text-lg">
-                      ${selectedBooking.totalPrice.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-gray-600 text-xs mb-1">Loại phòng</p>
+                <p className="font-semibold text-gray-900">{booking.roomType}</p>
               </div>
-
-              {/* Guest Info */}
-              <div className="space-y-3">
-                <h4 className="font-bold text-gray-900">Thông tin khách</h4>
-                <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm">
-                  <div>
-                    <p className="text-gray-600 text-xs mb-1">Tên khách</p>
-                    <p className="font-semibold text-gray-900">{selectedBooking.guestName}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600 text-xs mb-1">Số điện thoại</p>
-                    <p className="font-semibold text-gray-900">{selectedBooking.guestPhone}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Rating Section for Completed Bookings */}
-              {selectedBooking.status === "completed" && !userRatings[selectedBooking.id] && !selectedBooking.rating && (
-                <div className="space-y-3">
-                  <h4 className="font-bold text-gray-900">Đánh giá khách sạn</h4>
-                  <RatingForm
-                    bookingId={selectedBooking.id}
-                    onSubmit={(rating, review) => handleRateBooking(selectedBooking.id, rating, review)}
-                  />
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="space-y-3 pb-4">
-                {selectedBooking.status === "pending" || selectedBooking.status === "confirmed" ? (
-                  <>
-                    <button
-                      onClick={() => {
-                        handleCancelBooking(selectedBooking.id)
-                      }}
-                      className="w-full px-4 py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors"
-                    >
-                      Hủy đặt phòng
-                    </button>
-                    <button
-                      onClick={() => handleRebooking(selectedBooking)}
-                      className="w-full px-4 py-3 bg-cyan-500 text-white rounded-lg font-medium hover:bg-cyan-600 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                      Đặt lại
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => setSelectedBooking(null)}
-                    className="w-full px-4 py-3 bg-cyan-500 text-white rounded-lg font-medium hover:bg-cyan-600 transition-colors"
-                  >
-                    Đóng
-                  </button>
-                )}
-
-                <button className="w-full px-4 py-3 bg-gray-100 text-gray-900 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
-                  <MessageCircle className="w-4 h-4" />
-                  Liên hệ hỗ trợ
-                </button>
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-gray-600 text-xs mb-1">Số đêm</p>
+                <p className="font-semibold text-gray-900">{booking.nights} đêm</p>
               </div>
             </div>
           </div>
+
+          <div className="space-y-3">
+            <h4 className="font-bold text-gray-900">Chi tiết thanh toán</h4>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-600">
+                  ${booking.pricePerNight.toLocaleString()} × {booking.nights} đêm
+                </span>
+                <span className="font-semibold text-gray-900">
+                  ${booking.subtotal?.toLocaleString() || (booking.pricePerNight * booking.nights).toLocaleString()}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Thuế</span>
+                <span className="font-semibold text-gray-900">${booking.tax?.toLocaleString() || 0}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Phí dịch vụ</span>
+                <span className="font-semibold text-gray-900">${booking.serviceFee?.toLocaleString() || 0}</span>
+              </div>
+              <div className="border-t border-gray-200 pt-2 flex justify-between">
+                <span className="font-bold text-gray-900">Tổng cộng</span>
+                <span className="font-bold text-cyan-600 text-lg">
+                  ${booking.totalPrice.toLocaleString()}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {booking.status === "Completed" && !booking.rating && (
+            <div className="space-y-3">
+              <h4 className="font-bold text-gray-900">Đánh giá khách sạn</h4>
+              <RatingForm onSubmit={onRate} />
+            </div>
+          )}
+
+          {booking.rating && (
+            <div className="space-y-3">
+              <h4 className="font-bold text-gray-900">Đánh giá của bạn</h4>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex gap-1 mb-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      size={18}
+                      className={star <= (booking.rating || 0) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}
+                    />
+                  ))}
+                </div>
+                <p className="text-sm text-gray-700">{booking.review}</p>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-3 pb-4">
+            {canCancel && (
+              <button
+                onClick={onCancel}
+                className="w-full px-4 py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors"
+              >
+                Hủy đặt phòng
+              </button>
+            )}
+
+            <button
+              onClick={onClose}
+              className="w-full px-4 py-3 bg-cyan-500 text-white rounded-lg font-medium hover:bg-cyan-600 transition-colors"
+            >
+              Đóng
+            </button>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
 
 // Rating Form Component
 function RatingForm({
-  bookingId,
   onSubmit,
 }: {
-  bookingId: string
   onSubmit: (rating: number, review: string) => void
 }) {
   const [rating, setRating] = useState(5)
@@ -526,10 +645,14 @@ function RatingForm({
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2">
+      <div className="flex gap-2 justify-center">
         {[1, 2, 3, 4, 5].map((star) => (
-          <button key={star} onClick={() => setRating(star)} className="transition-transform hover:scale-110">
-            <Star className={`w-8 h-8 ${star <= rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
+          <button 
+            key={star} 
+            onClick={() => setRating(star)} 
+            className="transition-transform hover:scale-110"
+          >
+            <Star className={`w-10 h-10 ${star <= rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
           </button>
         ))}
       </div>
@@ -541,7 +664,13 @@ function RatingForm({
         rows={4}
       />
       <button
-        onClick={() => onSubmit(rating, review)}
+        onClick={() => {
+          if (!review.trim()) {
+            alert("Vui lòng nhập nội dung đánh giá!")
+            return
+          }
+          onSubmit(rating, review)
+        }}
         className="w-full px-4 py-3 bg-cyan-500 text-white rounded-lg font-medium hover:bg-cyan-600 transition-colors"
       >
         Gửi đánh giá

@@ -17,7 +17,14 @@ interface HomePageProps {
   onViewHotel: (id: string) => void
   favorites: string[]
   properties: any[]
+  onViewFavorites?: () => void  // thêm
+  onViewMyBookings?: () => void // thêm
   onToggleFavorite: (id: string) => void   // ĐÃ THÊM
+  onBackFromChat?: () => void   // <-- thêm dòng này
+
+  
+  
+
 }
 
 type User = {
@@ -32,7 +39,8 @@ export function HomePage({
   onViewHotel,
   favorites,
   properties,
-  onToggleFavorite,   // NHẬN TỪ PAGE.TSX
+  onToggleFavorite,  
+  onBackFromChat, // NHẬN TỪ PAGE.TSX
 }: HomePageProps) {
   const [activeTab, setActiveTab] = useState("home")
   const [showSearch, setShowSearch] = useState(false)
@@ -135,9 +143,18 @@ export function HomePage({
   }
 
   if (showChat) {
-  return <HotelChatPage onBack={() => setActiveTab("home")} hotelName="Sunrise Resort" />
-
+  return (
+    <HotelChatPage
+      hotelName="Sunrise Resort"
+      onBack={() => {
+        setShowChat(false)       // ẩn chat
+        onBackFromChat?.()       // quay về home
+        setActiveTab("home")     // highlight tab home
+      }}
+    />
+  )
 }
+
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
@@ -267,7 +284,12 @@ export function HomePage({
 
       {/* Modals */}
       {showSearch && <SearchModal onClose={() => setShowSearch(false)} />}
-      {showFilter && <FilterModal onClose={() => setShowFilter(false)} />}
+      {showFilter && <FilterModal onClose={() => setShowFilter(false)}
+        onApply={(filters) => {
+        console.log("Filters applied:", filters)
+        setShowFilter(false)
+      // Nếu cần, lưu filters vào state để lọc properties
+      }}  />}
       {showEdit && user && (
         <EditProfileModal
           user={user}

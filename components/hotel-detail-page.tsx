@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button"
 
 interface HotelDetailPageProps {
   hotelId: string
-  hotel?: Hotel | null | undefined // Allow undefined to match Page.tsx
+  hotel?: Hotel | null | undefined
   onBack: () => void
   onSelectRoom: (roomId: number) => void
   onToggleFavorite?: (id: string) => void
@@ -59,7 +59,6 @@ interface Hotel {
   }[]
 }
 
-// Map icon strings to Lucide components
 const iconMap: { [key: string]: React.ElementType } = {
   Wifi,
   Utensils,
@@ -71,25 +70,58 @@ const iconMap: { [key: string]: React.ElementType } = {
   Coffee,
 }
 
-export function HotelDetailPage({ hotelId, hotel: initialHotel, onBack, onSelectRoom, onToggleFavorite }: HotelDetailPageProps) {
+export function HotelDetailPage({ 
+  hotelId, 
+  hotel: initialHotel, 
+  onBack, 
+  onSelectRoom, 
+  onToggleFavorite 
+}: HotelDetailPageProps) {
   const [isFavorite, setIsFavorite] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [hotel, setHotel] = useState<Hotel | null>(null) // Initialize as null
-  const [isLoading, setIsLoading] = useState(true) // Always start with loading
+  const [hotel, setHotel] = useState<Hotel | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const CURRENT_USER_ID = "u001" // Thay bằng logic xác thực nếu có
+  const CURRENT_USER_ID = "u001"
+  const API_URL = "http://localhost:3001"
 
-  // Fetch dữ liệu từ db.json nếu không có initialHotel hoặc initialHotel là undefined
+  // Fetch hotel data (bao gồm reviews mới nhất)
+  const fetchHotelData = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      const hotelResponse = await fetch(`${API_URL}/hotels/${hotelId}`)
+      if (!hotelResponse.ok) throw new Error("Failed to fetch hotel")
+      const hotelData: Hotel = await hotelResponse.json()
+
+      setHotel(hotelData)
+
+      // Check favorite status
+      const favoritesResponse = await fetch(
+        `${API_URL}/favorites?userId=${CURRENT_USER_ID}&propertyId=${hotelId}`
+      )
+      if (!favoritesResponse.ok) throw new Error("Failed to fetch favorites")
+      const favoritesData = await favoritesResponse.json()
+      setIsFavorite(favoritesData.length > 0)
+    } catch (err: any) {
+      setError(err.message || "Failed to load hotel details")
+      console.error("Error fetching hotel:", err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   useEffect(() => {
     if (initialHotel) {
       setHotel(initialHotel)
       setIsLoading(false)
-      // Kiểm tra trạng thái yêu thích
+      
       const checkFavorite = async () => {
         try {
           const favoritesResponse = await fetch(
-            `http://localhost:3001/favorites?userId=${CURRENT_USER_ID}&propertyId=${hotelId}`
+            `${API_URL}/favorites?userId=${CURRENT_USER_ID}&propertyId=${hotelId}`
           )
           if (!favoritesResponse.ok) throw new Error("Failed to fetch favorites")
           const favoritesData = await favoritesResponse.json()
@@ -99,76 +131,57 @@ export function HotelDetailPage({ hotelId, hotel: initialHotel, onBack, onSelect
         }
       }
       checkFavorite()
+      
+      // Vẫn fetch để có reviews mới nhất
+      fetchHotelData()
       return
     }
 
-    const fetchHotel = async () => {
-      try {
-        setIsLoading(true)
-        setError(null)
-
-        // Lấy chi tiết khách sạn
-        const hotelResponse = await fetch(`http://localhost:3001/hotels/${hotelId}`)
-        if (!hotelResponse.ok) throw new Error("Failed to fetch hotel")
-        const hotelData: Hotel = await hotelResponse.json()
-
-        setHotel(hotelData)
-
-        // Kiểm tra trạng thái yêu thích
-        const favoritesResponse = await fetch(
-          `http://localhost:3001/favorites?userId=${CURRENT_USER_ID}&propertyId=${hotelId}`
-        )
-        if (!favoritesResponse.ok) throw new Error("Failed to fetch favorites")
-        const favoritesData = await favoritesResponse.json()
-        setIsFavorite(favoritesData.length > 0)
-      } catch (err: any) {
-        setError(err.message || "Failed to load hotel details")
-        console.error("Error fetching hotel:", err)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchHotel()
+    fetchHotelData()
   }, [hotelId, initialHotel])
 
-  // Xử lý toggle favorite
+  // Auto-refresh reviews every 30 seconds (optional)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchHotelData()
+    }, 30000) // 30 seconds
+
+    return () => clearInterval(interval)
+  }, [hotelId])
+
   const handleToggleFavorite = async () => {
     try {
       if (isFavorite) {
-        // Xóa khỏi danh sách yêu thích
         const favoriteResponse = await fetch(
-          `http://localhost:3001/favorites?userId=${CURRENT_USER_ID}&propertyId=${hotelId}`
+          `${API_URL}/favorites?userId=${CURRENT_USER_ID}&propertyId=${hotelId}`
         )
         const favoriteData = await favoriteResponse.json()
         if (favoriteData[0]) {
-          await fetch(`http://localhost:3001/favorites/${favoriteData[0].id}`, {
+          await fetch(`${API_URL}/favorites/${favoriteData[0].id}`, {
             method: "DELETE",
           })
         }
       } else {
-        // Thêm vào danh sách yêu thích
-        await fetch("http://localhost:3001/favorites", {
+        await fetch(`${API_URL}/favorites`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             userId: CURRENT_USER_ID,
-            propertyId: hotelId, // Sử dụng chuỗi thay vì parseInt
+            propertyId: hotelId,
           }),
         })
       }
       setIsFavorite(!isFavorite)
       if (onToggleFavorite) {
-        onToggleFavorite(hotelId) // Gọi callback để đồng bộ với Page.tsx
+        onToggleFavorite(hotelId)
       }
     } catch (error) {
       console.error("Error toggling favorite:", error)
     }
   }
 
-  // Xử lý trạng thái loading
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -180,7 +193,6 @@ export function HotelDetailPage({ hotelId, hotel: initialHotel, onBack, onSelect
     )
   }
 
-  // Xử lý trạng thái lỗi hoặc không tìm thấy khách sạn
   if (error || !hotel) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -198,7 +210,6 @@ export function HotelDetailPage({ hotelId, hotel: initialHotel, onBack, onSelect
     )
   }
 
-  // Tạo danh sách hình ảnh cho carousel
   const images = [hotel.image, ...hotel.rooms.map((room) => room.image)].filter(
     (img, index, self) => img && self.indexOf(img) === index
   )
@@ -224,7 +235,6 @@ export function HotelDetailPage({ hotelId, hotel: initialHotel, onBack, onSelect
         >
           <Heart size={24} className={isFavorite ? "fill-destructive text-destructive" : "text-foreground"} />
         </button>
-        {/* Image indicators */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
           {images.map((_, idx) => (
             <button
@@ -257,7 +267,9 @@ export function HotelDetailPage({ hotelId, hotel: initialHotel, onBack, onSelect
               <Star size={16} className="fill-yellow-400 text-yellow-400" />
               <span className="font-semibold text-foreground">{hotel.rating}</span>
             </div>
-            <span className="text-sm text-muted-foreground">({hotel.reviewsCount} reviews)</span>
+            <span className="text-sm text-muted-foreground">
+              ({hotel.reviewsCount} reviews)
+            </span>
           </div>
         </div>
 
@@ -346,36 +358,55 @@ export function HotelDetailPage({ hotelId, hotel: initialHotel, onBack, onSelect
           </div>
         </div>
 
-        {/* Reviews */}
+        {/* Reviews Section - Cập nhật real-time */}
         <div>
-          <h2 className="text-lg font-bold text-foreground mb-4">Guest Reviews</h2>
-          <div className="space-y-4">
-            {hotel.reviews.map((review) => (
-              <div key={review.id} className="pb-4 border-b border-border last:border-0">
-                <div className="flex items-start gap-3 mb-2">
-                  <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-bold">
-                    {review.avatar}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <p className="font-semibold text-foreground">{review.author}</p>
-                      <span className="text-xs text-muted-foreground">{review.date}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={14}
-                          className={i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <p className="text-sm text-muted-foreground">{review.text}</p>
-              </div>
-            ))}
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-foreground">
+              Guest Reviews ({hotel.reviewsCount})
+            </h2>
+            <button 
+              onClick={fetchHotelData}
+              className="text-sm text-primary hover:underline"
+            >
+              Refresh
+            </button>
           </div>
+          
+          {hotel.reviews.length === 0 ? (
+            <div className="text-center py-8 bg-muted rounded-lg">
+              <p className="text-muted-foreground">Chưa có đánh giá nào</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {hotel.reviews
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                .map((review) => (
+                  <div key={review.id} className="pb-4 border-b border-border last:border-0 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <div className="flex items-start gap-3 mb-2">
+                      <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-bold">
+                        {review.avatar}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <p className="font-semibold text-foreground">{review.author}</p>
+                          <span className="text-xs text-muted-foreground">{review.date}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              size={14}
+                              className={i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground">{review.text}</p>
+                  </div>
+                ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
