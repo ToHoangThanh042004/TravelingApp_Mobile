@@ -578,22 +578,31 @@
       },
       "rating": 1,
       "review": "hu"
+    },
+    {
+      "id": "d06b",
+      "userId": "u001",
+      "hotelId": "1",
+      "roomId": 1,
+      "checkIn": "2027-06-10",
+      "checkOut": "2027-06-11",
+      "nights": 1,
+      "subtotal": 120,
+      "tax": 12,
+      "serviceFee": 6,
+      "total": 138,
+      "createdAt": "2025-11-07T08:04:57.073Z",
+      "status": "Confirmed",
+      "paymentMethod": "paypal",
+      "paymentDetails": {
+        "type": "PayPal"
+      }
     }
   ],
   "favorites": [
     {
-      "id": "fav002",
-      "userId": "u001",
-      "propertyId": "3"
-    },
-    {
       "id": "0e9e",
       "userId": "887a",
-      "propertyId": "2"
-    },
-    {
-      "id": "9444",
-      "userId": "u001",
       "propertyId": "2"
     }
   ]
