@@ -597,6 +597,82 @@
       "paymentDetails": {
         "type": "PayPal"
       }
+    },
+    {
+      "id": "dca8",
+      "userId": "887a",
+      "hotelId": "2",
+      "roomId": 5,
+      "checkIn": "2025-11-09",
+      "checkOut": "2025-11-16",
+      "nights": 7,
+      "subtotal": 1400,
+      "tax": 140,
+      "serviceFee": 70,
+      "total": 1610,
+      "createdAt": "2025-11-09T07:28:19.764Z",
+      "status": "Cancelled",
+      "paymentMethod": "paypal",
+      "paymentDetails": {
+        "type": "PayPal"
+      }
+    },
+    {
+      "id": "40b3",
+      "userId": "887a",
+      "hotelId": "2",
+      "roomId": 5,
+      "checkIn": "2025-11-09",
+      "checkOut": "2025-11-16",
+      "nights": 7,
+      "subtotal": 1400,
+      "tax": 140,
+      "serviceFee": 70,
+      "total": 1610,
+      "createdAt": "2025-11-09T07:32:31.893Z",
+      "status": "Cancelled",
+      "paymentMethod": "paypal",
+      "paymentDetails": {
+        "type": "PayPal"
+      }
+    },
+    {
+      "id": "a27e",
+      "userId": "887a",
+      "hotelId": "1",
+      "roomId": 2,
+      "checkIn": "2025-11-09",
+      "checkOut": "2025-11-16",
+      "nights": 7,
+      "subtotal": 1260,
+      "tax": 126,
+      "serviceFee": 63,
+      "total": 1449,
+      "createdAt": "2025-11-09T07:34:20.164Z",
+      "status": "Cancelled",
+      "paymentMethod": "paypal",
+      "paymentDetails": {
+        "type": "PayPal"
+      }
+    },
+    {
+      "id": "47be",
+      "userId": "887a",
+      "hotelId": "2",
+      "roomId": 5,
+      "checkIn": "2025-11-09",
+      "checkOut": "2025-11-16",
+      "nights": 7,
+      "subtotal": 1400,
+      "tax": 140,
+      "serviceFee": 70,
+      "total": 1610,
+      "createdAt": "2025-11-09T07:34:51.514Z",
+      "status": "Confirmed",
+      "paymentMethod": "paypal",
+      "paymentDetails": {
+        "type": "PayPal"
+      }
     }
   ],
   "favorites": [

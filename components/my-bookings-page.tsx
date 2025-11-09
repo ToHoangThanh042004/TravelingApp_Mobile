@@ -113,6 +113,7 @@ export function MyBookingsPage({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentUser, setCurrentUser] = useState<User | null>(null)
+  
 
   const canCancelBooking = (booking: DisplayBooking) => {
     const createdAt = new Date(booking.createdAt).getTime()
@@ -280,26 +281,40 @@ export function MyBookingsPage({
   }
 
   const handleCancelBooking = async (bookingId: string) => {
-    if (!confirm("Bạn có chắc chắn muốn hủy đặt phòng này?")) {
-      return
-    }
-
-    try {
-      await fetch(`${apiUrl}/bookings/${bookingId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: "Cancelled" }),
-      })
-
-      fetchBookings()
-      setSelectedBooking(null)
-    } catch (err) {
-      console.error("Error cancelling booking:", err)
-      alert("Không thể hủy đặt phòng. Vui lòng thử lại.")
-    }
+  const booking = bookings.find(b => b.id === bookingId)
+  if (!booking) {
+    alert("Không tìm thấy thông tin đặt phòng.")
+    return
   }
+
+  // 🔒 Kiểm tra quá hạn 12h
+  if (!canCancelBooking(booking)) {
+    alert("❌ Bạn chỉ được phép hủy đặt phòng trong vòng 12 giờ kể từ khi đặt. Sau thời gian này, không thể hủy.")
+    return
+  }
+
+  if (!confirm("Bạn có chắc chắn muốn hủy đặt phòng này?")) {
+    return
+  }
+
+  try {
+    await fetch(`${apiUrl}/bookings/${bookingId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status: "Cancelled" }),
+    })
+
+    fetchBookings()
+    setSelectedBooking(null)
+    alert("✅ Đã hủy đặt phòng thành công.")
+  } catch (err) {
+    console.error("Error cancelling booking:", err)
+    alert("❌ Không thể hủy đặt phòng. Vui lòng thử lại.")
+  }
+}
+
 
   if (loading) {
     return (
@@ -447,14 +462,15 @@ export function MyBookingsPage({
                   Xem chi tiết
                 </button>
 
-                {canCancelBooking(booking) && (
-                  <button
-                    onClick={() => handleCancelBooking(booking.id)}
-                    className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
-                  >
-                    Hủy đặt
-                  </button>
-                )}
+                {booking.status !== "Cancelled" && canCancelBooking(booking) && (
+  <button
+    onClick={() => handleCancelBooking(booking.id)}
+    className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
+  >
+    Hủy đặt
+  </button>
+)}
+
 
                 {booking.status === "Completed" && !booking.rating && (
                   <button
