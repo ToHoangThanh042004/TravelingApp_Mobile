@@ -139,66 +139,86 @@ export function MyBookingsPage({
   }
 
   const fetchBookings = async () => {
-    try {
-      setLoading(true)
-      setError(null)
+  try {
+    setLoading(true)
+    setError(null)
 
-      const [bookingsRes, hotelsRes] = await Promise.all([
-        fetch(`${apiUrl}/bookings`),
-        fetch(`${apiUrl}/hotels`)
-      ])
+    const [bookingsRes, hotelsRes] = await Promise.all([
+      fetch(`${apiUrl}/bookings`),
+      fetch(`${apiUrl}/hotels`)
+    ])
 
-      const allBookings: Booking[] = await bookingsRes.json()
-      const hotels: Hotel[] = await hotelsRes.json()
+    const allBookings: Booking[] = await bookingsRes.json()
+    const hotels: Hotel[] = await hotelsRes.json()
 
-      const userBookings = allBookings.filter((booking) => 
-        String(booking.userId) === String(userId)
-      )
+    const now = new Date().getTime()
 
-      const formattedBookings: DisplayBooking[] = userBookings.map((booking) => {
-        const hotel = hotels.find((h) => h.id === String(booking.hotelId))
-        const room = hotel?.rooms?.find((r) => r.id === booking.roomId)
-
-        return {
-          id: booking.id,
-          propertyName: hotel?.title || "Unknown Hotel",
-          location: hotel?.location || "Unknown Location",
-          image: room?.image || hotel?.image || "/placeholder.svg",
-          checkIn: booking.checkIn,
-          checkOut: booking.checkOut,
-          totalPrice: booking.total,
-          status: booking.status,
-          bookingId: `BK${booking.id.toUpperCase()}`,
-          address: hotel?.location || "Unknown Address",
-          roomType: room?.name || "Standard Room",
-          nights: booking.nights || 1,
-          pricePerNight: room?.price || Math.floor(booking.total / (booking.nights || 1)),
-          guestName: currentUser?.name || "Guest",
-          guestPhone: currentUser?.phoneNumber || "N/A",
-          guestEmail: currentUser?.email,
-          rating: booking.rating,
-          review: booking.review,
-          subtotal: booking.subtotal,
-          tax: booking.tax,
-          serviceFee: booking.serviceFee,
-          paymentMethod: booking.paymentMethod,
-          paymentDetails: booking.paymentDetails,
-          createdAt: booking.createdAt,
+    // Tự động cập nhật trạng thái nếu quá ngày checkOut
+    const updatedBookings = await Promise.all(
+      allBookings.map(async (booking) => {
+        const checkOutTime = new Date(booking.checkOut).getTime()
+        if (booking.status !== "Completed" && now > checkOutTime) {
+          // Cập nhật trên server luôn
+          await fetch(`${apiUrl}/bookings/${booking.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "Completed" }),
+          })
+          return { ...booking, status: "Completed" }
         }
+        return booking
       })
+    )
 
-      formattedBookings.sort((a, b) => 
-        new Date(b.checkIn).getTime() - new Date(a.checkIn).getTime()
-      )
+    const userBookings = updatedBookings.filter((booking) =>
+      String(booking.userId) === String(userId)
+    )
 
-      setBookings(formattedBookings)
-    } catch (err) {
-      console.error("Error fetching bookings:", err)
-      setError("Không thể tải danh sách đặt phòng. Vui lòng thử lại.")
-    } finally {
-      setLoading(false)
-    }
+    const formattedBookings: DisplayBooking[] = userBookings.map((booking) => {
+      const hotel = hotels.find((h) => h.id === String(booking.hotelId))
+      const room = hotel?.rooms?.find((r) => r.id === booking.roomId)
+
+      return {
+        id: booking.id,
+        propertyName: hotel?.title || "Unknown Hotel",
+        location: hotel?.location || "Unknown Location",
+        image: room?.image || hotel?.image || "/placeholder.svg",
+        checkIn: booking.checkIn,
+        checkOut: booking.checkOut,
+        totalPrice: booking.total,
+        status: booking.status,
+        bookingId: `BK${booking.id.toUpperCase()}`,
+        address: hotel?.location || "Unknown Address",
+        roomType: room?.name || "Standard Room",
+        nights: booking.nights || 1,
+        pricePerNight: room?.price || Math.floor(booking.total / (booking.nights || 1)),
+        guestName: currentUser?.name || "Guest",
+        guestPhone: currentUser?.phoneNumber || "N/A",
+        guestEmail: currentUser?.email,
+        rating: booking.rating,
+        review: booking.review,
+        subtotal: booking.subtotal,
+        tax: booking.tax,
+        serviceFee: booking.serviceFee,
+        paymentMethod: booking.paymentMethod,
+        paymentDetails: booking.paymentDetails,
+        createdAt: booking.createdAt,
+      }
+    })
+
+    formattedBookings.sort((a, b) =>
+      new Date(b.checkIn).getTime() - new Date(a.checkIn).getTime()
+    )
+
+    setBookings(formattedBookings)
+  } catch (err) {
+    console.error("Error fetching bookings:", err)
+    setError("Không thể tải danh sách đặt phòng. Vui lòng thử lại.")
+  } finally {
+    setLoading(false)
   }
+}
+
 
   const filteredBookings = bookings.filter((booking) => {
     const matchesFilter = activeFilter === "all" || booking.status === activeFilter
@@ -460,9 +480,8 @@ export function MyBookingsPage({
                   className="flex-1 px-3 py-2 bg-cyan-50 text-cyan-600 rounded-lg text-sm font-medium hover:bg-cyan-100 transition-colors"
                 >
                   Xem chi tiết
-                </button>
-
-                {booking.status !== "Cancelled" && canCancelBooking(booking) && (
+                </button>\
+                {booking.status !== "Cancelled" && booking.status !== "Completed" && canCancelBooking(booking) && (
   <button
     onClick={() => handleCancelBooking(booking.id)}
     className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
@@ -470,6 +489,9 @@ export function MyBookingsPage({
     Hủy đặt
   </button>
 )}
+
+
+                
 
 
                 {booking.status === "Completed" && !booking.rating && (

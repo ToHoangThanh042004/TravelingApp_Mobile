@@ -1,20 +1,55 @@
 "use client"
 
 import { useState } from "react"
-import { X, ChevronLeft, ChevronRight } from "lucide-react"
+import { X, ChevronLeft, ChevronRight, MapPin } from "lucide-react"
+
+export type SearchFilters = {
+  location: string
+  checkIn: string | null
+  checkOut: string | null
+  adults: number
+  children: number
+}
 
 interface SearchModalProps {
   onClose: () => void
+  onSearch: (filters: SearchFilters) => void
+  initialFilters?: SearchFilters
 }
 
-export function SearchModal({ onClose }: SearchModalProps) {
+// Danh sách tỉnh thành Việt Nam
+const VIETNAM_PROVINCES = [
+  { code: 'HN', name: 'Hanoi' },
+  { code: 'HCM', name: 'Ho Chi Minh City' },
+  { code: 'DN', name: 'Da Nang' },
+  { code: 'HP', name: 'Hai Phong' },
+  { code: 'CT', name: 'Can Tho' },
+  { code: 'NT', name: 'Nha Trang' },
+  { code: 'HL', name: 'Ha Long' },
+  { code: 'PQ', name: 'Phu Quoc' },
+  { code: 'HA', name: 'Hoi An' },
+  { code: 'DL', name: 'Da Lat' },
+  { code: 'VT', name: 'Vung Tau' },
+  { code: 'QN', name: 'Quy Nhon' },
+  { code: 'HU', name: 'Hue' },
+  { code: 'SL', name: 'Sa Pa' },
+  { code: 'MC', name: 'Moc Chau' }
+]
+
+export function SearchModal({ onClose, onSearch, initialFilters }: SearchModalProps) {
   const [step, setStep] = useState<"location" | "dates" | "guests">("location")
-  const [location, setLocation] = useState("Anywhere")
-  const [startDate, setStartDate] = useState("23")
-  const [endDate, setEndDate] = useState("31")
-  const [adults, setAdults] = useState(0)
-  const [children, setChildren] = useState(0)
-  const [currentMonth, setCurrentMonth] = useState(new Date(2022, 1))
+  const [location, setLocation] = useState(initialFilters?.location || "")
+  const [checkIn, setCheckIn] = useState<string | null>(initialFilters?.checkIn || null)
+  const [checkOut, setCheckOut] = useState<string | null>(initialFilters?.checkOut || null)
+  const [adults, setAdults] = useState(initialFilters?.adults || 0)
+  const [children, setChildren] = useState(initialFilters?.children || 0)
+  const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [searchQuery, setSearchQuery] = useState("")
+
+  // Lọc tỉnh thành theo tìm kiếm
+  const filteredProvinces = VIETNAM_PROVINCES.filter(p =>
+    p.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
@@ -24,15 +59,42 @@ export function SearchModal({ onClose }: SearchModalProps) {
     return new Date(date.getFullYear(), date.getMonth(), 1).getDay()
   }
 
+  // Kiểm tra ngày có trong quá khứ không
+  const isPastDate = (day: number) => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0) // Reset giờ về 00:00:00
+    
+    const dateToCheck = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth(),
+      day
+    )
+    dateToCheck.setHours(0, 0, 0, 0)
+    
+    return dateToCheck < today
+  }
+
+  // Kiểm tra có thể chuyển về tháng trước không
+  const canGoPrevMonth = () => {
+    const today = new Date()
+    const prevMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
+    
+    // Cho phép quay về tháng hiện tại, không cho quay về tháng trước đó
+    return prevMonth.getFullYear() >= today.getFullYear() && 
+           prevMonth.getMonth() >= today.getMonth()
+  }
+
   const renderCalendar = () => {
     const daysInMonth = getDaysInMonth(currentMonth)
     const firstDay = getFirstDayOfMonth(currentMonth)
     const days = []
 
+    // Thêm các ô trống đầu tháng
     for (let i = 0; i < firstDay; i++) {
       days.push(null)
     }
 
+    // Thêm các ngày trong tháng
     for (let i = 1; i <= daysInMonth; i++) {
       days.push(i)
     }
@@ -45,11 +107,78 @@ export function SearchModal({ onClose }: SearchModalProps) {
     year: "numeric",
   })
 
-  const locations = [
-    { name: "Anywhere", image: "/anywhere-travel.jpg" },
-    { name: "Europe", image: "/europe-eiffel-tower.jpg" },
-    { name: "Asia", image: "/asia-landscape-mountains.jpg" },
-  ]
+  const handleDateClick = (day: number) => {
+    // Không cho phép chọn ngày trong quá khứ
+    if (isPastDate(day)) {
+      return
+    }
+
+    const selectedDate = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth(),
+      day
+    ).toISOString().split('T')[0]
+
+    if (!checkIn || (checkIn && checkOut)) {
+      // Chọn ngày check-in mới
+      setCheckIn(selectedDate)
+      setCheckOut(null)
+    } else if (checkIn && !checkOut) {
+      // Chọn ngày check-out
+      if (new Date(selectedDate) > new Date(checkIn)) {
+        setCheckOut(selectedDate)
+      } else {
+        // Nếu chọn ngày trước check-in, đặt lại check-in
+        setCheckIn(selectedDate)
+        setCheckOut(null)
+      }
+    }
+  }
+
+  const isDateInRange = (day: number) => {
+    if (!checkIn || !checkOut) return false
+    const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day)
+    return date > new Date(checkIn) && date < new Date(checkOut)
+  }
+
+  const isDateSelected = (day: number) => {
+    const dateStr = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth(),
+      day
+    ).toISOString().split('T')[0]
+    return dateStr === checkIn || dateStr === checkOut
+  }
+
+  const handleSearch = () => {
+    onSearch({
+      location,
+      checkIn,
+      checkOut,
+      adults,
+      children
+    })
+    onClose()
+  }
+
+  const handleClear = () => {
+    if (step === "location") {
+      setLocation("")
+      setSearchQuery("")
+    } else if (step === "dates") {
+      setCheckIn(null)
+      setCheckOut(null)
+    } else {
+      setAdults(0)
+      setChildren(0)
+    }
+  }
+
+  const getNightCount = () => {
+    if (!checkIn || !checkOut) return 0
+    const diff = new Date(checkOut).getTime() - new Date(checkIn).getTime()
+    return Math.ceil(diff / (1000 * 60 * 60 * 24))
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end animate-fade-in">
@@ -58,8 +187,8 @@ export function SearchModal({ onClose }: SearchModalProps) {
         <div className="sticky top-0 bg-card border-b border-border px-6 py-4 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-foreground">
             {step === "location" && "Where to?"}
-            {step === "dates" && "When staying"}
-            {step === "guests" && "How many guests?"}
+            {step === "dates" && "When's your trip?"}
+            {step === "guests" && "Who's coming?"}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-muted rounded-full transition-colors">
             <X size={24} className="text-foreground" />
@@ -71,33 +200,28 @@ export function SearchModal({ onClose }: SearchModalProps) {
           {step === "location" && (
             <div className="space-y-6">
               <div className="relative">
+                <MapPin className="absolute left-3 top-3 text-muted-foreground" size={20} />
                 <input
                   type="text"
-                  placeholder="Search"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="w-full px-4 py-3 border border-border rounded-lg bg-input text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  placeholder="Search destinations"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border border-border rounded-lg bg-input text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                {locations.map((loc) => (
+              <div className="space-y-2 max-h-96 overflow-y-auto">
+                {filteredProvinces.map((province) => (
                   <button
-                    key={loc.name}
+                    key={province.code}
                     onClick={() => {
-                      setLocation(loc.name)
+                      setLocation(province.name)
                       setStep("dates")
                     }}
-                    className="flex flex-col gap-2 group cursor-pointer"
+                    className="w-full text-left px-4 py-3 hover:bg-muted rounded-lg transition-colors flex items-center gap-3"
                   >
-                    <div className="aspect-square bg-muted rounded-lg overflow-hidden relative shadow-sm hover:shadow-md transition-shadow">
-                      <img
-                        src={loc.image || "/placeholder.svg"}
-                        alt={loc.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                      />
-                    </div>
-                    <p className="text-sm font-medium text-foreground text-center">{loc.name}</p>
+                    <MapPin size={20} className="text-muted-foreground" />
+                    <span className="font-medium text-foreground">{province.name}, Vietnam</span>
                   </button>
                 ))}
               </div>
@@ -106,20 +230,16 @@ export function SearchModal({ onClose }: SearchModalProps) {
 
           {step === "dates" && (
             <div className="space-y-6">
-              <div className="flex gap-3">
-                <button className="flex-1 bg-primary text-primary-foreground py-3 px-4 rounded-lg font-semibold hover:bg-primary/90 transition-colors">
-                  Choose dates
-                </button>
-                <button className="flex-1 py-3 px-4 border border-border text-foreground rounded-lg font-semibold hover:bg-muted transition-colors">
-                  Anytime
-                </button>
-              </div>
-
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <button
                     onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}
-                    className="p-2 hover:bg-muted rounded-lg transition-colors"
+                    className={`p-2 rounded-lg transition-colors ${
+                      canGoPrevMonth() 
+                        ? 'hover:bg-muted' 
+                        : 'opacity-30 cursor-not-allowed'
+                    }`}
+                    disabled={!canGoPrevMonth()}
                   >
                     <ChevronLeft size={20} className="text-foreground" />
                   </button>
@@ -134,7 +254,7 @@ export function SearchModal({ onClose }: SearchModalProps) {
 
                 {/* Day headers */}
                 <div className="grid grid-cols-7 gap-1 mb-2">
-                  {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
+                  {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
                     <div key={day} className="text-center text-xs font-semibold text-muted-foreground py-2">
                       {day}
                     </div>
@@ -142,41 +262,52 @@ export function SearchModal({ onClose }: SearchModalProps) {
                 </div>
 
                 <div className="grid grid-cols-7 gap-1">
-                  {renderCalendar().map((day, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => {
-                        if (day) setStartDate(String(day))
-                      }}
-                      className={`aspect-square rounded-lg text-sm font-medium transition-all ${
-                        day === null
-                          ? "text-transparent"
-                          : day === Number.parseInt(startDate) || day === Number.parseInt(endDate)
-                            ? "bg-primary text-primary-foreground"
-                            : day && Number.parseInt(startDate) < day && day < Number.parseInt(endDate)
-                              ? "bg-primary/30 text-foreground"
-                              : "text-foreground hover:bg-muted"
-                      }`}
-                    >
-                      {day}
-                    </button>
-                  ))}
+                  {renderCalendar().map((day, idx) => {
+                    const isPast = day ? isPastDate(day) : false
+                    const isDisabled = !day || isPast
+
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => day && !isPast && handleDateClick(day)}
+                        disabled={isDisabled}
+                        className={`aspect-square rounded-lg text-sm font-medium transition-all ${
+                          day === null
+                            ? "invisible"
+                            : isPast
+                              ? "text-muted-foreground/30 cursor-not-allowed line-through"
+                              : isDateSelected(day)
+                                ? "bg-primary text-primary-foreground"
+                                : isDateInRange(day)
+                                  ? "bg-primary/30 text-foreground"
+                                  : "text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        {day}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
 
-              <div className="flex items-center justify-between bg-muted rounded-lg px-4 py-3 border border-border">
-                <span className="text-sm text-muted-foreground">Duration</span>
-                <span className="font-semibold text-foreground">
-                  {Math.abs(Number.parseInt(endDate) - Number.parseInt(startDate))} days
-                </span>
-              </div>
+              {checkIn && checkOut && (
+                <div className="flex items-center justify-between bg-muted rounded-lg px-4 py-3 border border-border">
+                  <span className="text-sm text-muted-foreground">Duration</span>
+                  <span className="font-semibold text-foreground">
+                    {getNightCount()} night{getNightCount() > 1 ? 's' : ''}
+                  </span>
+                </div>
+              )}
             </div>
           )}
 
           {step === "guests" && (
             <div className="space-y-4">
               <div className="flex items-center justify-between py-4 border-b border-border">
-                <span className="font-medium text-foreground">Adults</span>
+                <div>
+                  <div className="font-medium text-foreground">Adults</div>
+                  <div className="text-sm text-muted-foreground">Ages 13 or above</div>
+                </div>
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setAdults(Math.max(0, adults - 1))}
@@ -195,7 +326,10 @@ export function SearchModal({ onClose }: SearchModalProps) {
               </div>
 
               <div className="flex items-center justify-between py-4">
-                <span className="font-medium text-foreground">Children</span>
+                <div>
+                  <div className="font-medium text-foreground">Children</div>
+                  <div className="text-sm text-muted-foreground">Ages 2-12</div>
+                </div>
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setChildren(Math.max(0, children - 1))}
@@ -219,25 +353,16 @@ export function SearchModal({ onClose }: SearchModalProps) {
         {/* Footer */}
         <div className="sticky bottom-0 bg-card border-t border-border px-6 py-4 flex gap-3">
           <button
-            onClick={() => {
-              if (step === "location") setLocation("Anywhere")
-              else if (step === "dates") {
-                setStartDate("23")
-                setEndDate("31")
-              } else {
-                setAdults(0)
-                setChildren(0)
-              }
-            }}
+            onClick={handleClear}
             className="flex-1 py-3 px-4 border border-border text-foreground rounded-lg font-semibold hover:bg-muted transition-colors"
           >
-            Clear all
+            Clear
           </button>
           <button
             onClick={() => {
               if (step === "location") setStep("dates")
               else if (step === "dates") setStep("guests")
-              else onClose()
+              else handleSearch()
             }}
             className="flex-1 py-3 px-4 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors"
           >

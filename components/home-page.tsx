@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { SearchBar } from "@/components/search-bar"
+import { SearchBar, SearchFilters } from "@/components/search-bar"
 import { PropertyCard } from "@/components/property-card"
 import { BottomNav } from "@/components/bottom-nav"
 import { SearchModal } from "@/components/search-modal"
@@ -17,14 +17,10 @@ interface HomePageProps {
   onViewHotel: (id: string) => void
   favorites: string[]
   properties: any[]
-  onViewFavorites?: () => void  // thêm
-  onViewMyBookings?: () => void // thêm
-  onToggleFavorite: (id: string) => void   // ĐÃ THÊM
-  onBackFromChat?: () => void   // <-- thêm dòng này
-
-  
-  
-
+  onViewFavorites?: () => void
+  onViewMyBookings?: () => void
+  onToggleFavorite: (id: string) => void
+  onBackFromChat?: () => void
 }
 
 type User = {
@@ -39,8 +35,8 @@ export function HomePage({
   onViewHotel,
   favorites,
   properties,
-  onToggleFavorite,  
-  onBackFromChat, // NHẬN TỪ PAGE.TSX
+  onToggleFavorite,
+  onBackFromChat,
 }: HomePageProps) {
   const [activeTab, setActiveTab] = useState("home")
   const [showSearch, setShowSearch] = useState(false)
@@ -49,9 +45,17 @@ export function HomePage({
   const [user, setUser] = useState<User | null>(null)
   const [localFavorites, setLocalFavorites] = useState<string[]>(favorites || [])
   const [showBookings, setShowBookings] = useState(false)
+  const [showChat, setShowChat] = useState(false)
   const apiBase = "http://localhost:3001"
 
-  const [showChat, setShowChat] = useState(false)
+  // State cho search filters
+  const [searchFilters, setSearchFilters] = useState<SearchFilters>({
+    location: "",
+    checkIn: null,
+    checkOut: null,
+    adults: 0,
+    children: 0
+  })
 
   // Sync localFavorites khi favorites thay đổi
   useEffect(() => {
@@ -71,11 +75,10 @@ export function HomePage({
     }
   }, [])
 
-  // Xử lý toggle favorite (gọi API nếu cần)
+  // Xử lý toggle favorite
   const handleToggleFavorite = async (propertyId: string) => {
     if (!user) return
 
-    // Gọi API để đồng bộ với json-server
     const isFav = localFavorites.includes(propertyId)
     try {
       if (isFav) {
@@ -96,20 +99,50 @@ export function HomePage({
       console.error("Sync favorite failed:", err)
     }
 
-    // Gọi callback từ Page.tsx để cập nhật state toàn cục
     onToggleFavorite(propertyId)
   }
+
+  // Xử lý search
+  const handleSearch = (filters: SearchFilters) => {
+    setSearchFilters(filters)
+  }
+
+  // Lọc properties theo search filters
+  const filterProperties = () => {
+    return properties.filter(property => {
+      // Lọc theo location
+      if (searchFilters.location && !property.location.includes(searchFilters.location)) {
+        return false
+      }
+
+      // Lọc theo số khách (kiểm tra có phòng nào đủ sức chứa không)
+      const totalGuests = searchFilters.adults + searchFilters.children
+      if (totalGuests > 0) {
+        const hasRoomForGuests = property.rooms?.some(
+          (room: any) => room.maxGuests >= totalGuests && room.available
+        )
+        if (!hasRoomForGuests) return false
+      }
+
+      // TODO: Lọc theo ngày (cần kiểm tra bookings)
+      // Hiện tại giả sử tất cả phòng available đều có thể book được
+
+      return true
+    })
+  }
+
+  const filteredProperties = filterProperties()
+  const hasActiveFilters = searchFilters.location || searchFilters.checkIn || 
+                           (searchFilters.adults + searchFilters.children) > 0
 
   const handleTabChange = (tab: string) => {
     if (tab === "bookings") {
       setShowBookings(true)
+    } else if (tab === "chat") {
+      setShowChat(true)
     } else {
       setActiveTab(tab)
     }
-    if (tab === "chat") {
-      setShowChat(true)
-}
-
   }
 
   const handleBackFromBookings = () => {
@@ -120,6 +153,16 @@ export function HomePage({
     localStorage.removeItem("authToken")
     localStorage.removeItem("authUser")
     setUser(null)
+  }
+
+  const handleClearFilters = () => {
+    setSearchFilters({
+      location: "",
+      checkIn: null,
+      checkOut: null,
+      adults: 0,
+      children: 0
+    })
   }
 
   if (!user) {
@@ -143,24 +186,27 @@ export function HomePage({
   }
 
   if (showChat) {
-  return (
-    <HotelChatPage
-      hotelName="Sunrise Resort"
-      onBack={() => {
-        setShowChat(false)       // ẩn chat
-        onBackFromChat?.()       // quay về home
-        setActiveTab("home")     // highlight tab home
-      }}
-    />
-  )
-}
+    return (
+      <HotelChatPage
+        hotelName="Sunrise Resort"
+        onBack={() => {
+          setShowChat(false)
+          onBackFromChat?.()
+          setActiveTab("home")
+        }}
+      />
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-card border-b border-border shadow-sm">
         <div className="max-w-md mx-auto px-4 py-4">
-          <SearchBar onOpenSearch={() => setShowSearch(true)} />
+          <SearchBar 
+            onOpenSearch={() => setShowSearch(true)} 
+            filters={searchFilters}
+          />
         </div>
       </div>
 
@@ -169,23 +215,49 @@ export function HomePage({
         {activeTab === "home" && (
           <div className="space-y-4 animate-fade-in">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-foreground">Popular stays</h2>
-            </div>
-            <div className="grid gap-4">
-              {properties.map((property) => (
-                <div
-                  key={property.id}
-                  className="cursor-pointer"
-                  onClick={() => onViewHotel(property.id)}
+              <h2 className="text-lg font-bold text-foreground">
+                {hasActiveFilters 
+                  ? `${filteredProperties.length} stay${filteredProperties.length !== 1 ? 's' : ''} found` 
+                  : 'Popular stays'}
+              </h2>
+              {hasActiveFilters && (
+                <button
+                  onClick={handleClearFilters}
+                  className="text-sm text-primary font-medium hover:underline"
                 >
-                  <PropertyCard
-                    property={property}
-                    onToggleFavorite={() => handleToggleFavorite(property.id)}
-                    isFavorite={localFavorites.includes(property.id)}
-                  />
-                </div>
-              ))}
+                  Clear filters
+                </button>
+              )}
             </div>
+
+            {filteredProperties.length > 0 ? (
+              <div className="grid gap-4">
+                {filteredProperties.map((property) => (
+                  <div
+                    key={property.id}
+                    className="cursor-pointer"
+                    onClick={() => onViewHotel(property.id)}
+                  >
+                    <PropertyCard
+                      property={property}
+                      onToggleFavorite={() => handleToggleFavorite(property.id)}
+                      isFavorite={localFavorites.includes(property.id)}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <MapPin size={48} className="mx-auto text-muted-foreground mb-2" />
+                <p className="text-muted-foreground mb-4">No hotels found matching your criteria</p>
+                <button
+                  onClick={handleClearFilters}
+                  className="text-primary font-medium hover:underline"
+                >
+                  Clear filters and see all
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -254,13 +326,13 @@ export function HomePage({
                   >
                     Edit Profile
                   </button>
+                  
                   <button
-  className="w-full py-2 px-4 mt-2 border border-border text-foreground rounded-lg font-medium hover:bg-muted transition-colors"
-  onClick={() => setShowChat(true)}
->
-  Chat với khách sạn
-</button>
-
+                    className="w-full py-2 px-4 mt-2 border border-border text-foreground rounded-lg font-medium hover:bg-muted transition-colors"
+                    onClick={() => setShowChat(true)}
+                  >
+                    Chat với khách sạn
+                  </button>
 
                   <button
                     className="w-full py-2 px-4 mt-2 border border-border text-foreground rounded-lg font-medium hover:bg-muted transition-colors"
@@ -283,13 +355,24 @@ export function HomePage({
       </div>
 
       {/* Modals */}
-      {showSearch && <SearchModal onClose={() => setShowSearch(false)} />}
-      {showFilter && <FilterModal onClose={() => setShowFilter(false)}
-        onApply={(filters) => {
-        console.log("Filters applied:", filters)
-        setShowFilter(false)
-      // Nếu cần, lưu filters vào state để lọc properties
-      }}  />}
+      {showSearch && (
+        <SearchModal 
+          onClose={() => setShowSearch(false)} 
+          onSearch={handleSearch}
+          initialFilters={searchFilters}
+        />
+      )}
+      
+      {showFilter && (
+        <FilterModal 
+          onClose={() => setShowFilter(false)}
+          onApply={(filters) => {
+            console.log("Filters applied:", filters)
+            setShowFilter(false)
+          }}
+        />
+      )}
+      
       {showEdit && user && (
         <EditProfileModal
           user={user}

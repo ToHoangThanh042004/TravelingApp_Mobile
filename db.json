@@ -3,11 +3,11 @@
     {
       "id": "u001",
       "phoneNumber": "0388022504",
-      "name": "Soái Ca Hoàng Thành",
+      "name": "Phạm Văn Bình Be",
       "email": "hoangthanhdev@example.com",
       "avatar": "https://i.pravatar.cc/150?img=3",
       "createdAt": "2025-10-28T09:04:50.739Z",
-      "lastLogin": "2025-11-06T18:47:14.725Z"
+      "lastLogin": "2025-11-09T14:39:31.737Z"
     },
     {
       "id": "u002",
@@ -25,18 +25,184 @@
       "avatar": "",
       "createdAt": "2025-11-06T13:57:11.561Z",
       "lastLogin": "2025-11-06T13:57:11.561Z"
+    },
+    {
+      "id": "501a",
+      "phoneNumber": "0388022501",
+      "name": "Người dùng mới",
+      "avatar": "",
+      "createdAt": "2025-11-09T14:45:14.224Z",
+      "lastLogin": "2025-11-09T14:45:14.224Z"
     }
   ],
-  "otps": [],
+  "otps": [
+    {
+      "id": "a882",
+      "phoneNumber": "0388022504",
+      "otp": "196233"
+    }
+  ],
   "hotels": [
     {
       "id": "1",
-      "title": "Balian Treehouse Resort",
-      "location": "Bali, Indonesia",
-      "rating": 4.5,
-      "reviewsCount": 262,
-      "description": "Stunning beachfront villa with private pool and ocean views. Perfect for families and groups looking for a luxurious tropical getaway.",
-      "image": "/modern-apartment-bedroom-with-plants.jpg",
+      "title": "Hanoi Lotus Hotel",
+      "location": "Hanoi, Vietnam",
+      "rating": 5,
+      "reviewsCount": 2,
+      "description": "Peaceful stay in the Old Quarter with authentic Vietnamese cuisine.",
+      "image": "/hanoi-hotel.jpg",
+      "facilities": [
+        {
+          "icon": "Wifi",
+          "label": "WiFi",
+          "description": "Free high-speed WiFi"
+        },
+        {
+          "icon": "Utensils",
+          "label": "Restaurant",
+          "description": "Traditional Vietnamese food"
+        }
+      ],
+      "rooms": [
+        {
+          "id": 1,
+          "name": "Superior Room",
+          "size": 20,
+          "beds": "1 Queen Bed",
+          "maxGuests": 2,
+          "view": "Street View",
+          "price": 120,
+          "available": true,
+          "image": "/hanoi-room.jpg",
+          "images": [
+            "/hanoi-room.jpg"
+          ],
+          "description": "Cozy room with modern amenities and street views.",
+          "amenities": [
+            "WiFi",
+            "Air Conditioning",
+            "Mini Bar"
+          ],
+          "policies": [
+            "Check-in: 14:00 - 22:00",
+            "Check-out: Before 12:00",
+            "No smoking"
+          ]
+        },
+        {
+          "id": 2,
+          "name": "Deluxe Room",
+          "size": 28,
+          "beds": "1 King Bed",
+          "maxGuests": 2,
+          "view": "City View",
+          "price": 180,
+          "available": true,
+          "image": "/hanoi-deluxe-room.jpg",
+          "images": [
+            "/hanoi-deluxe-room.jpg"
+          ],
+          "description": "Spacious deluxe room with king-sized bed and city view.",
+          "amenities": [
+            "WiFi",
+            "Air Conditioning",
+            "Mini Bar",
+            "TV"
+          ],
+          "policies": [
+            "Check-in: 14:00 - 22:00",
+            "Check-out: Before 12:00",
+            "No smoking"
+          ]
+        },
+        {
+          "id": 3,
+          "name": "Family Suite",
+          "size": 45,
+          "beds": "2 Queen Beds",
+          "maxGuests": 4,
+          "view": "Courtyard",
+          "price": 250,
+          "available": true,
+          "image": "/hanoi-family-suite.jpg",
+          "images": [
+            "/hanoi-family-suite.jpg"
+          ],
+          "description": "Ideal for families, spacious suite with courtyard view.",
+          "amenities": [
+            "WiFi",
+            "Air Conditioning",
+            "Mini Bar",
+            "Kitchenette"
+          ],
+          "policies": [
+            "Check-in: 14:00 - 22:00",
+            "Check-out: Before 12:00",
+            "No smoking",
+            "Pets allowed"
+          ]
+        },
+        {
+          "id": 4,
+          "name": "Executive Suite",
+          "size": 60,
+          "beds": "1 King Bed",
+          "maxGuests": 2,
+          "view": "Rooftop View",
+          "price": 350,
+          "available": true,
+          "image": "/hanoi-executive-suite.jpg",
+          "images": [
+            "/hanoi-executive-suite.jpg"
+          ],
+          "description": "Luxury suite with rooftop view, perfect for business travelers.",
+          "amenities": [
+            "WiFi",
+            "Air Conditioning",
+            "Mini Bar",
+            "TV",
+            "Coffee Maker",
+            "Work Desk"
+          ],
+          "policies": [
+            "Check-in: 14:00 - 22:00",
+            "Check-out: Before 12:00",
+            "No smoking",
+            "Pets not allowed"
+          ]
+        }
+      ],
+      "reviews": [
+        {
+          "id": 1,
+          "author": "Soái Ca Hoàng Thành",
+          "avatar": "SC",
+          "rating": 5,
+          "date": "Nov 10, 2025",
+          "text": "ádfhjk",
+          "userId": "u001",
+          "bookingId": "completed-hl-2"
+        },
+        {
+          "id": 2,
+          "author": "Soái Ca Hoàng Thành",
+          "avatar": "SC",
+          "rating": 5,
+          "date": "Nov 10, 2025",
+          "text": "123",
+          "userId": "u001",
+          "bookingId": "completed-hl-3"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "title": "Saigon Central Hotel",
+      "location": "Ho Chi Minh City, Vietnam",
+      "rating": 5,
+      "reviewsCount": 1,
+      "description": "Luxury hotel in the heart of Ho Chi Minh City with modern amenities and rooftop pool.",
+      "image": "/saigon-hotel.jpg",
       "facilities": [
         {
           "icon": "Wifi",
@@ -45,184 +211,18 @@
         },
         {
           "icon": "Utensils",
-          "label": "Kitchen",
-          "description": "Fully equipped"
-        },
-        {
-          "icon": "Dumbbell",
-          "label": "Exercise equipment",
-          "description": "Gym access"
+          "label": "Restaurant",
+          "description": "Vietnamese & international cuisine"
         },
         {
           "icon": "Droplet",
           "label": "Pool",
-          "description": "Private pool"
-        },
-        {
-          "icon": "Trees",
-          "label": "Garden",
-          "description": "Lush garden"
-        },
-        {
-          "icon": "Wind",
-          "label": "Air conditioning",
-          "description": "Climate control"
-        },
-        {
-          "icon": "Tv",
-          "label": "TV",
-          "description": "Smart TV"
-        },
-        {
-          "icon": "Coffee",
-          "label": "Coffee maker",
-          "description": "Premium coffee"
-        }
-      ],
-      "rooms": [
-        {
-          "id": 1,
-          "name": "Deluxe Room",
-          "size": 28,
-          "beds": "1 King Bed",
-          "maxGuests": 2,
-          "view": "City View",
-          "price": 120,
-          "available": true,
-          "image": "/modern-apartment-bedroom-with-plants.jpg",
-          "images": [
-            "/modern-apartment-bedroom-with-plants.jpg",
-            "/luxury-bedroom-with-modern-design.jpg"
-          ],
-          "description": "Spacious deluxe room with modern amenities and city views. Perfect for couples or solo travelers.",
-          "amenities": [
-            "TV",
-            "Air conditioning",
-            "WiFi",
-            "Minibar",
-            "Safe",
-            "Work desk"
-          ],
-          "policies": [
-            "Check-in: 14:00 - 22:00",
-            "Check-out: Before 12:00",
-            "No smoking",
-            "Pets not allowed",
-            "Free cancellation up to 24 hours before check-in"
-          ]
-        },
-        {
-          "id": 2,
-          "name": "Suite Room",
-          "size": 45,
-          "beds": "1 King Bed + Living Area",
-          "maxGuests": 4,
-          "view": "Ocean View",
-          "price": 180,
-          "available": true,
-          "image": "/luxury-bedroom-with-modern-design.jpg",
-          "images": [
-            "/luxury-bedroom-with-modern-design.jpg",
-            "/beach-house-with-pool-and-ocean-view.jpg"
-          ],
-          "description": "Luxurious suite with separate living area and breathtaking ocean views.",
-          "amenities": [
-            "TV",
-            "Air conditioning",
-            "WiFi",
-            "Minibar",
-            "Safe",
-            "Work desk",
-            "Jacuzzi"
-          ],
-          "policies": [
-            "Check-in: 14:00 - 22:00",
-            "Check-out: Before 12:00",
-            "No smoking",
-            "Pets not allowed",
-            "Free cancellation up to 48 hours before check-in"
-          ]
-        },
-        {
-          "id": 3,
-          "name": "Family Room",
-          "size": 60,
-          "beds": "2 Double Beds",
-          "maxGuests": 6,
-          "view": "Garden View",
-          "price": 220,
-          "available": true,
-          "image": "/beach-house-with-pool-and-ocean-view.jpg",
-          "images": [
-            "/beach-house-with-pool-and-ocean-view.jpg",
-            "/modern-apartment-bedroom-with-plants.jpg"
-          ],
-          "description": "Spacious family room with garden views and full kitchen facilities.",
-          "amenities": [
-            "TV",
-            "Air conditioning",
-            "WiFi",
-            "Minibar",
-            "Safe",
-            "Work desk",
-            "Kitchen"
-          ],
-          "policies": [
-            "Check-in: 14:00 - 22:00",
-            "Check-out: Before 12:00",
-            "No smoking",
-            "Pets allowed with extra fee",
-            "Free cancellation up to 72 hours before check-in"
-          ]
-        }
-      ],
-      "reviews": [
-        {
-          "id": 1,
-          "author": "John Doe",
-          "avatar": "JD",
-          "rating": 5,
-          "date": "2 weeks ago",
-          "text": "Amazing place! The view is incredible and the host is very responsive."
-        },
-        {
-          "id": 2,
-          "author": "Sarah Harris",
-          "avatar": "SH",
-          "rating": 4,
-          "date": "1 month ago",
-          "text": "Beautiful property with great amenities. Highly recommended!"
-        }
-      ]
-    },
-    {
-      "id": "2",
-      "title": "Grand Plaza Hotel",
-      "location": "New York, USA",
-      "rating": 3,
-      "reviewsCount": 2,
-      "description": "Luxury hotel in the heart of Manhattan with stunning city views, world-class dining, and exceptional service.",
-      "image": "/luxury-bedroom-with-modern-design.jpg",
-      "facilities": [
-        {
-          "icon": "Wifi",
-          "label": "WiFi",
-          "description": "Complimentary WiFi"
-        },
-        {
-          "icon": "Utensils",
-          "label": "Restaurant",
-          "description": "Fine dining"
+          "description": "Rooftop pool"
         },
         {
           "icon": "Dumbbell",
-          "label": "Fitness Center",
-          "description": "24/7 gym"
-        },
-        {
-          "icon": "Droplet",
-          "label": "Spa",
-          "description": "Full-service spa"
+          "label": "Gym",
+          "description": "24/7 fitness center"
         }
       ],
       "rooms": [
@@ -235,71 +235,61 @@
           "view": "City View",
           "price": 200,
           "available": true,
-          "image": "/luxury-bedroom-with-modern-design.jpg",
+          "image": "/saigon-room.jpg",
           "images": [
-            "/luxury-bedroom-with-modern-design.jpg"
+            "/saigon-room.jpg"
           ],
           "description": "Elegant king room with city views and modern amenities.",
           "amenities": [
-            "Smart TV",
-            "Air conditioning",
             "WiFi",
-            "Minibar",
+            "Air Conditioning",
+            "Mini Bar",
             "Safe",
-            "Work desk"
+            "Work Desk"
           ],
           "policies": [
             "Check-in: 15:00",
             "Check-out: 11:00",
-            "No smoking",
-            "Service animals allowed"
+            "No smoking"
           ]
         }
       ],
       "reviews": [
         {
-          "id": 3,
-          "author": "Michael Chen",
-          "avatar": "MC",
-          "rating": 5,
-          "date": "1 week ago",
-          "text": "Exceptional service and prime location."
-        },
-        {
-          "id": 4,
+          "id": 1,
           "author": "Soái Ca Hoàng Thành",
           "avatar": "SC",
-          "rating": 1,
-          "date": "Nov 7, 2025",
-          "text": "hu",
+          "rating": 5,
+          "date": "Nov 10, 2025",
+          "text": "2342",
           "userId": "u001",
-          "bookingId": "completed004"
+          "bookingId": "booking-hl-1"
         }
       ]
     },
     {
       "id": "3",
-      "title": "Seaside Paradise Resort",
-      "location": "Maldives",
-      "rating": 4.9,
-      "reviewsCount": 389,
-      "description": "Overwater bungalows with direct access to crystal-clear turquoise waters.",
-      "image": "/beach-house-with-pool-and-ocean-view.jpg",
+      "title": "Da Nang Beach Resort",
+      "location": "Da Nang, Vietnam",
+      "rating": 5,
+      "reviewsCount": 1,
+      "description": "Seaside resort with private beach access and stunning sunset views.",
+      "image": "/danang-resort.jpg",
       "facilities": [
         {
           "icon": "Wifi",
           "label": "WiFi",
-          "description": "High-speed WiFi"
-        },
-        {
-          "icon": "Utensils",
-          "label": "Dining",
-          "description": "Multiple restaurants"
+          "description": "Free WiFi"
         },
         {
           "icon": "Droplet",
-          "label": "Water Sports",
-          "description": "Diving & snorkeling"
+          "label": "Pool",
+          "description": "Private pool"
+        },
+        {
+          "icon": "Utensils",
+          "label": "Restaurant",
+          "description": "Seafood specialties"
         }
       ],
       "rooms": [
@@ -312,16 +302,16 @@
           "view": "Beach View",
           "price": 450,
           "available": true,
-          "image": "/beach-house-with-pool-and-ocean-view.jpg",
+          "image": "/danang-villa.jpg",
           "images": [
-            "/beach-house-with-pool-and-ocean-view.jpg"
+            "/danang-villa.jpg"
           ],
           "description": "Private beach villa with stunning ocean views.",
           "amenities": [
             "WiFi",
-            "Air conditioning",
-            "Outdoor shower",
-            "Private deck"
+            "Air Conditioning",
+            "Outdoor Shower",
+            "Private Deck"
           ],
           "policies": [
             "Check-in: 14:00",
@@ -339,14 +329,14 @@
           "view": "Ocean View",
           "price": 600,
           "available": true,
-          "image": "/luxury-bedroom-with-modern-design.jpg",
+          "image": "/danang-bungalow.jpg",
           "images": [
-            "/luxury-bedroom-with-modern-design.jpg"
+            "/danang-bungalow.jpg"
           ],
           "description": "Romantic overwater bungalow with glass floor panels.",
           "amenities": [
             "WiFi",
-            "Air conditioning",
+            "Air Conditioning",
             "Glass floor",
             "Direct ocean access"
           ],
@@ -360,238 +350,265 @@
       ],
       "reviews": [
         {
-          "id": 5,
-          "author": "David & Lisa",
-          "avatar": "DL",
+          "id": 1,
+          "author": "Soái Ca Hoàng Thành",
+          "avatar": "SC",
           "rating": 5,
-          "date": "5 days ago",
-          "text": "Paradise found! Incredible service."
+          "date": "Nov 10, 2025",
+          "text": "5656",
+          "userId": "u001",
+          "bookingId": "b005"
         }
       ]
+    },
+    {
+      "id": "4",
+      "title": "Hoi An Riverside Hotel",
+      "location": "Hoi An, Vietnam",
+      "rating": 5,
+      "reviewsCount": 1,
+      "description": "Charming riverside hotel in Hoi An Old Town with traditional architecture.",
+      "image": "/hoian-hotel.jpg",
+      "facilities": [
+        {
+          "icon": "Wifi",
+          "label": "WiFi",
+          "description": "Free high-speed WiFi"
+        },
+        {
+          "icon": "Utensils",
+          "label": "Restaurant",
+          "description": "Local Vietnamese cuisine"
+        },
+        {
+          "icon": "Trees",
+          "label": "Garden",
+          "description": "Relaxing riverside garden"
+        }
+      ],
+      "rooms": [
+        {
+          "id": 10,
+          "name": "Twin Deluxe",
+          "size": 25,
+          "beds": "2 Twin Beds",
+          "maxGuests": 2,
+          "view": "River View",
+          "price": 150,
+          "available": true,
+          "image": "/hoian-room.jpg",
+          "amenities": [
+            "WiFi",
+            "TV",
+            "Mini Bar"
+          ]
+        }
+      ],
+      "reviews": [
+        {
+          "id": 1,
+          "author": "Soái Ca Hoàng Thành",
+          "avatar": "SC",
+          "rating": 5,
+          "date": "Nov 10, 2025",
+          "text": "123",
+          "userId": "u001",
+          "bookingId": "b100"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "title": "Phu Quoc Paradise Resort",
+      "location": "Phu Quoc, Vietnam",
+      "rating": 4.9,
+      "reviewsCount": 220,
+      "description": "Luxury beachfront resort on Phu Quoc Island with tropical gardens and private villas.",
+      "image": "/phuquoc-resort.jpg",
+      "facilities": [
+        {
+          "icon": "Wifi",
+          "label": "WiFi",
+          "description": "High-speed WiFi"
+        },
+        {
+          "icon": "Droplet",
+          "label": "Pool",
+          "description": "Infinity pool"
+        },
+        {
+          "icon": "Spa",
+          "label": "Spa",
+          "description": "Wellness & spa center"
+        }
+      ],
+      "rooms": [
+        {
+          "id": 11,
+          "name": "Ocean View Suite",
+          "size": 35,
+          "beds": "1 King Bed",
+          "maxGuests": 2,
+          "view": "Sea View",
+          "price": 320,
+          "available": true,
+          "image": "/phuquoc-room.jpg",
+          "amenities": [
+            "WiFi",
+            "Balcony",
+            "Jacuzzi"
+          ]
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "id": "6",
+      "title": "Nha Trang Seaview Hotel",
+      "location": "Nha Trang, Vietnam",
+      "rating": 4.7,
+      "reviewsCount": 180,
+      "description": "Modern seaside hotel with panoramic ocean views and rooftop pool.",
+      "image": "/nhatrang-hotel.jpg",
+      "facilities": [
+        {
+          "icon": "Wifi",
+          "label": "WiFi",
+          "description": "Free WiFi"
+        },
+        {
+          "icon": "Droplet",
+          "label": "Pool",
+          "description": "Infinity pool"
+        },
+        {
+          "icon": "Utensils",
+          "label": "Restaurant",
+          "description": "Seafood specialties"
+        }
+      ],
+      "rooms": [
+        {
+          "id": 12,
+          "name": "Ocean Suite",
+          "size": 40,
+          "beds": "1 King Bed",
+          "maxGuests": 3,
+          "view": "Ocean View",
+          "price": 280,
+          "available": true,
+          "image": "/nhatrang-room.jpg",
+          "amenities": [
+            "WiFi",
+            "Air Conditioning",
+            "Balcony",
+            "Mini Bar"
+          ]
+        }
+      ],
+      "reviews": []
     }
   ],
   "bookings": [
     {
-      "id": "bk001",
+      "id": "750a",
       "userId": "u001",
       "hotelId": "1",
       "roomId": 1,
-      "checkIn": "2025-12-20",
-      "checkOut": "2025-12-23",
-      "nights": 3,
-      "subtotal": 360,
-      "tax": 36,
-      "serviceFee": 18,
-      "total": 414,
-      "createdAt": "2025-11-06T10:30:00.000Z",
-      "status": "Confirmed",
-      "paymentMethod": "card",
-      "paymentDetails": {
-        "type": "Credit Card",
-        "cardNumber": "3456",
-        "cardName": "HOANG THANH"
-      }
-    },
-    {
-      "id": "1d71",
-      "userId": "u001",
-      "hotelId": "1",
-      "roomId": 1,
-      "checkIn": "2025-11-06",
-      "checkOut": "2025-11-13",
+      "checkIn": "2025-11-10",
+      "checkOut": "2025-11-17",
       "nights": 7,
       "subtotal": 840,
       "tax": 84,
       "serviceFee": 42,
       "total": 966,
-      "createdAt": "2025-11-06T13:55:38.759Z",
+      "createdAt": "2025-11-10T04:56:58.996Z",
       "status": "Confirmed",
-      "paymentMethod": "bank",
+      "paymentMethod": "paypal",
       "paymentDetails": {
-        "bankName": "Vietcombank",
-        "accountNumber": "1321",
-        "type": "Bank Transfer"
+        "type": "PayPal"
       }
     },
     {
-      "id": "c6db",
-      "userId": "887a",
+      "id": "b005",
+      "userId": "u001",
       "hotelId": "3",
       "roomId": 9,
-      "checkIn": "2025-11-06",
-      "checkOut": "2025-11-13",
-      "nights": 7,
-      "subtotal": 4200,
-      "tax": 420,
-      "serviceFee": 210,
-      "total": 4830,
-      "createdAt": "2025-11-06T13:59:18.389Z",
-      "status": "Cancelled",
-      "paymentMethod": "paypal",
-      "paymentDetails": {
-        "type": "PayPal"
-      }
-    },
-    {
-      "id": "9d29",
-      "userId": "887a",
-      "hotelId": "1",
-      "roomId": 1,
-      "checkIn": "2025-11-06",
-      "checkOut": "2025-11-13",
-      "nights": 7,
-      "subtotal": 840,
-      "tax": 84,
-      "serviceFee": 42,
-      "total": 966,
-      "createdAt": "2025-11-06T14:00:20.283Z",
-      "status": "Confirmed",
-      "paymentMethod": "paypal",
-      "paymentDetails": {
-        "type": "PayPal"
-      }
-    },
-    {
-      "id": "a68f",
-      "userId": "887a",
-      "hotelId": "2",
-      "roomId": 5,
-      "checkIn": "2025-11-06",
-      "checkOut": "2025-11-13",
-      "nights": 7,
-      "subtotal": 1400,
-      "tax": 140,
-      "serviceFee": 70,
-      "total": 1610,
-      "createdAt": "2025-11-06T14:24:31.735Z",
-      "status": "Cancelled",
-      "paymentMethod": "paypal",
-      "paymentDetails": {
-        "type": "PayPal"
-      }
-    },
-    {
-      "id": "7bca",
-      "userId": "887a",
-      "hotelId": "1",
-      "roomId": 2,
-      "checkIn": "2025-11-06",
-      "checkOut": "2025-11-13",
-      "nights": 7,
-      "subtotal": 1260,
-      "tax": 126,
-      "serviceFee": 63,
-      "total": 1449,
-      "createdAt": "2025-11-06T14:59:48.691Z",
-      "status": "Cancelled",
-      "paymentMethod": "bank",
-      "paymentDetails": {
-        "bankName": "mb bnak",
-        "accountNumber": "9341",
-        "type": "Bank Transfer"
-      }
-    },
-    {
-      "id": "completed001",
-      "userId": "u002",
-      "hotelId": "1",
-      "roomId": 1,
-      "checkIn": "2025-10-20",
-      "checkOut": "2025-10-23",
-      "nights": 3,
-      "subtotal": 360,
-      "tax": 36,
-      "serviceFee": 18,
-      "total": 414,
-      "createdAt": "2025-10-15T09:00:00.000Z",
+      "checkIn": "2025-10-01",
+      "checkOut": "2025-10-05",
+      "nights": 4,
+      "subtotal": 2400,
+      "tax": 240,
+      "serviceFee": 120,
+      "total": 2760,
+      "createdAt": "2025-09-20T10:00:00Z",
       "status": "Completed",
       "paymentMethod": "card",
       "paymentDetails": {
         "type": "Credit Card",
-        "cardNumber": "1234",
-        "cardName": "Minh Anh"
-      },
-      "rating": 3,
-      "review": ""
-    },
-    {
-      "id": "completed002",
-      "userId": "u002",
-      "hotelId": "2",
-      "roomId": 5,
-      "checkIn": "2025-09-10",
-      "checkOut": "2025-09-15",
-      "nights": 5,
-      "subtotal": 1000,
-      "tax": 100,
-      "serviceFee": 50,
-      "total": 1150,
-      "createdAt": "2025-09-01T10:00:00.000Z",
-      "status": "Completed",
-      "paymentMethod": "paypal",
-      "paymentDetails": {
-        "type": "PayPal"
+        "cardName": "NGUYEN VAN A",
+        "cardNumber": "**** **** **** 1234"
       },
       "rating": 5,
-      "review": "Hay\n"
+      "review": "5656"
     },
     {
-      "id": "completed003",
+      "id": "b006",
       "userId": "u001",
-      "hotelId": "3",
-      "roomId": 8,
-      "checkIn": "2025-08-05",
-      "checkOut": "2025-08-10",
-      "nights": 5,
-      "subtotal": 2250,
-      "tax": 225,
-      "serviceFee": 112.5,
-      "total": 2587.5,
-      "createdAt": "2025-07-25T09:00:00.000Z",
-      "status": "Completed",
+      "hotelId": "1",
+      "roomId": 2,
+      "checkIn": "2025-11-15",
+      "checkOut": "2025-11-18",
+      "nights": 3,
+      "subtotal": 900,
+      "tax": 90,
+      "serviceFee": 45,
+      "total": 1035,
+      "createdAt": "2025-11-08T08:00:00Z",
+      "status": "Confirmed",
       "paymentMethod": "card",
       "paymentDetails": {
         "type": "Credit Card",
-        "cardNumber": "5678",
-        "cardName": "Soái Ca Hoàng Thành"
+        "cardName": "NGUYEN VAN B",
+        "cardNumber": "**** **** **** 5678"
       },
-      "rating": 4,
-      "review": "Phòng đẹp, dịch vụ tốt, rất hài lòng."
+      "rating": null,
+      "review": null
     },
     {
-      "id": "completed004",
+      "id": "b100",
       "userId": "u001",
-      "hotelId": "2",
-      "roomId": 5,
-      "checkIn": "2025-07-12",
-      "checkOut": "2025-07-15",
+      "hotelId": "4",
+      "roomId": 1,
+      "checkIn": "2025-11-05",
+      "checkOut": "2025-11-08",
       "nights": 3,
-      "subtotal": 600,
-      "tax": 60,
-      "serviceFee": 30,
-      "total": 690,
-      "createdAt": "2025-07-01T10:30:00.000Z",
+      "subtotal": 300,
+      "tax": 30,
+      "serviceFee": 20,
+      "total": 350,
+      "createdAt": "2025-11-01T10:00:00Z",
       "status": "Completed",
-      "paymentMethod": "paypal",
+      "paymentMethod": "Credit Card",
       "paymentDetails": {
-        "type": "PayPal"
+        "cardNumber": "**** **** **** 1234"
       },
-      "rating": 1,
-      "review": "hu"
+      "rating": 5,
+      "review": "123"
     },
     {
-      "id": "d06b",
+      "id": "baa6",
       "userId": "u001",
       "hotelId": "1",
       "roomId": 1,
-      "checkIn": "2027-06-10",
-      "checkOut": "2027-06-11",
+      "checkIn": "2025-11-17",
+      "checkOut": "2025-11-18",
       "nights": 1,
       "subtotal": 120,
       "tax": 12,
       "serviceFee": 6,
       "total": 138,
-      "createdAt": "2025-11-07T08:04:57.073Z",
+      "createdAt": "2025-11-10T05:41:58.191Z",
       "status": "Confirmed",
       "paymentMethod": "paypal",
       "paymentDetails": {
@@ -599,75 +616,75 @@
       }
     },
     {
-      "id": "dca8",
-      "userId": "887a",
+      "id": "0518",
+      "userId": "u001",
       "hotelId": "2",
       "roomId": 5,
-      "checkIn": "2025-11-09",
-      "checkOut": "2025-11-16",
+      "checkIn": "2025-11-10",
+      "checkOut": "2025-11-17",
       "nights": 7,
       "subtotal": 1400,
       "tax": 140,
       "serviceFee": 70,
       "total": 1610,
-      "createdAt": "2025-11-09T07:28:19.764Z",
-      "status": "Cancelled",
+      "createdAt": "2025-11-10T05:49:11.766Z",
+      "status": "Confirmed",
       "paymentMethod": "paypal",
       "paymentDetails": {
         "type": "PayPal"
       }
     },
     {
-      "id": "40b3",
-      "userId": "887a",
-      "hotelId": "2",
-      "roomId": 5,
-      "checkIn": "2025-11-09",
-      "checkOut": "2025-11-16",
+      "id": "759a",
+      "userId": "u001",
+      "hotelId": "3",
+      "roomId": 8,
+      "checkIn": "2025-11-10",
+      "checkOut": "2025-11-17",
       "nights": 7,
-      "subtotal": 1400,
-      "tax": 140,
-      "serviceFee": 70,
-      "total": 1610,
-      "createdAt": "2025-11-09T07:32:31.893Z",
-      "status": "Cancelled",
+      "subtotal": 3150,
+      "tax": 315,
+      "serviceFee": 158,
+      "total": 3623,
+      "createdAt": "2025-11-10T05:49:38.439Z",
+      "status": "Confirmed",
       "paymentMethod": "paypal",
       "paymentDetails": {
         "type": "PayPal"
       }
     },
     {
-      "id": "a27e",
-      "userId": "887a",
+      "id": "906d",
+      "userId": "u001",
+      "hotelId": "4",
+      "roomId": 10,
+      "checkIn": "2025-11-10",
+      "checkOut": "2025-11-17",
+      "nights": 7,
+      "subtotal": 1050,
+      "tax": 105,
+      "serviceFee": 53,
+      "total": 1208,
+      "createdAt": "2025-11-10T05:57:34.099Z",
+      "status": "Confirmed",
+      "paymentMethod": "paypal",
+      "paymentDetails": {
+        "type": "PayPal"
+      }
+    },
+    {
+      "id": "1b3c",
+      "userId": "u001",
       "hotelId": "1",
-      "roomId": 2,
-      "checkIn": "2025-11-09",
-      "checkOut": "2025-11-16",
-      "nights": 7,
-      "subtotal": 1260,
-      "tax": 126,
-      "serviceFee": 63,
-      "total": 1449,
-      "createdAt": "2025-11-09T07:34:20.164Z",
-      "status": "Cancelled",
-      "paymentMethod": "paypal",
-      "paymentDetails": {
-        "type": "PayPal"
-      }
-    },
-    {
-      "id": "47be",
-      "userId": "887a",
-      "hotelId": "2",
-      "roomId": 5,
-      "checkIn": "2025-11-09",
-      "checkOut": "2025-11-16",
-      "nights": 7,
-      "subtotal": 1400,
-      "tax": 140,
-      "serviceFee": 70,
-      "total": 1610,
-      "createdAt": "2025-11-09T07:34:51.514Z",
+      "roomId": 1,
+      "checkIn": "2025-11-28",
+      "checkOut": "2025-11-29",
+      "nights": 1,
+      "subtotal": 120,
+      "tax": 12,
+      "serviceFee": 6,
+      "total": 138,
+      "createdAt": "2025-11-10T05:59:05.697Z",
       "status": "Confirmed",
       "paymentMethod": "paypal",
       "paymentDetails": {
@@ -677,9 +694,24 @@
   ],
   "favorites": [
     {
-      "id": "0e9e",
+      "id": "aec7",
       "userId": "887a",
-      "propertyId": "2"
+      "propertyId": "6"
+    },
+    {
+      "id": "b31b",
+      "userId": "u001",
+      "propertyId": "6"
+    },
+    {
+      "id": "db3c",
+      "userId": "u001",
+      "propertyId": "1"
+    },
+    {
+      "id": "7534",
+      "userId": "u001",
+      "propertyId": "1"
     }
   ]
 }

@@ -1,13 +1,13 @@
 "use client"
 
-import { ChevronLeft, AlertCircle, CreditCard, Wallet } from "lucide-react"
+import { ChevronLeft, AlertCircle, CreditCard, Wallet, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 interface BookingConfirmationPageProps {
   onBack: () => void
-  onConfirm: (paymentMethod: string, paymentDetails: any) => void
+  onConfirm: (paymentMethod: string, paymentDetails: any, userEmail: string) => void
   bookingData: {
     hotelName: string
     location: string
@@ -37,6 +37,26 @@ export function BookingConfirmationPage({ onBack, onConfirm, bookingData }: Book
   // Bank transfer states
   const [bankAccount, setBankAccount] = useState("")
   const [bankName, setBankName] = useState("")
+  
+  // Email state - người dùng nhập email
+  const [email, setEmail] = useState("")
+  const [userName, setUserName] = useState("")
+
+  // Load user info from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("authUser")
+      if (storedUser) {
+        try {
+          const user = JSON.parse(storedUser)
+          setUserName(user.name || "Guest")
+          setEmail(user.email || "")
+        } catch (err) {
+          console.error("Error loading user:", err)
+        }
+      }
+    }
+  }, [])
 
   const formatCardNumber = (value: string) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '')
@@ -63,7 +83,64 @@ export function BookingConfirmationPage({ onBack, onConfirm, bookingData }: Book
     return v
   }
 
+  const validateEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return re.test(email)
+  }
+
+  const sendBookingConfirmationEmail = async (bookingId: string , recipientEmail: string) => {
+    try {
+      // Thông tin EmailJS của bạn
+      const serviceId = 'service_t6xcupj'
+      const templateId = 'template_iz4t2k8'
+      const publicKey = 'hubj4x4VQwjy7SiRm'
+
+      // Import EmailJS
+      const emailjs = (await import('@emailjs/browser')).default
+
+      const templateParams = {
+        to_email: recipientEmail,
+        user_name: userName || "Khách hàng",
+        hotel_name: bookingData.hotelName,
+        room_name: bookingData.roomName,
+        check_in: bookingData.checkIn,
+        check_out: bookingData.checkOut,
+        nights: bookingData.nights,
+        total: bookingData.total,
+        booking_id: bookingId,
+        location: bookingData.location,
+        payment_method: paymentMethod === 'card' 
+          ? 'Thẻ tín dụng' 
+          : paymentMethod === 'bank' 
+          ? 'Chuyển khoản ngân hàng' 
+          : 'PayPal',
+        subtotal: bookingData.subtotal,
+        tax: bookingData.tax,
+        service_fee: bookingData.serviceFee,
+        price_per_night: bookingData.pricePerNight
+      }
+
+      console.log('📧 Đang gửi email đến:', email)
+      console.log('📋 Template params:', templateParams)
+
+      await emailjs.send(serviceId, templateId, templateParams, publicKey)
+      
+      console.log('✅ Email đã được gửi thành công!')
+      return true
+    } catch (error) {
+      console.error('❌ Lỗi khi gửi email:', error)
+      // Không chặn booking nếu email fail
+      return false
+    }
+  }
+
   const handleConfirm = async () => {
+    // Validate email
+    if (!email || !validateEmail(email)) {
+      alert("Vui lòng nhập địa chỉ email hợp lệ!")
+      return
+    }
+
     // Validate payment details
     if (paymentMethod === "card") {
       if (!cardNumber || !cardName || !expiryDate || !cvv) {
@@ -88,24 +165,37 @@ export function BookingConfirmationPage({ onBack, onConfirm, bookingData }: Book
     setIsProcessing(true)
 
     // Simulate payment processing
-    setTimeout(() => {
+    setTimeout(async () => {
       const paymentDetails = paymentMethod === "card" 
         ? { 
-            cardNumber: cardNumber.slice(-4), 
+            cardNumber: `**** **** **** ${cardNumber.slice(-4)}`, 
             cardName,
             type: "Credit Card"
           }
         : paymentMethod === "bank"
         ? {
             bankName,
-            accountNumber: bankAccount.slice(-4),
+            accountNumber: `**** **** ${bankAccount.slice(-4)}`,
             type: "Bank Transfer"
           }
         : {
             type: "PayPal"
           }
 
-      onConfirm(paymentMethod, paymentDetails)
+      // Generate booking ID
+      const bookingId = `${Date.now()}`
+      
+      // Gửi email xác nhận
+      const emailSent = await sendBookingConfirmationEmail(bookingId , email)
+      
+      if (emailSent) {
+        console.log('✅ Email confirmation sent successfully')
+      } else {
+        console.log('⚠️ Email sending failed, but booking continues')
+      }
+
+      // Pass email to parent component to save in booking
+      onConfirm(paymentMethod, paymentDetails, email)
       setIsProcessing(false)
     }, 2000)
   }
@@ -154,6 +244,29 @@ export function BookingConfirmationPage({ onBack, onConfirm, bookingData }: Book
               <span className="text-sm text-muted-foreground">Số đêm</span>
               <p className="text-sm font-semibold text-foreground">{bookingData.nights} đêm</p>
             </div>
+          </div>
+        </div>
+
+        {/* Email Input - PHẦN MỚI */}
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Mail size={20} className="text-blue-600 dark:text-blue-400" />
+            <h3 className="text-base font-semibold text-foreground">Email nhận xác nhận</h3>
+          </div>
+          <div>
+            <label className="text-sm text-muted-foreground mb-2 block">
+              Địa chỉ email <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              placeholder="example@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-900"
+            />
+            <p className="text-xs text-muted-foreground mt-2">
+              📧 Email xác nhận đặt phòng sẽ được gửi đến địa chỉ này
+            </p>
           </div>
         </div>
 
@@ -296,12 +409,14 @@ export function BookingConfirmationPage({ onBack, onConfirm, bookingData }: Book
         </div>
 
         {/* Info Alert */}
-        <div className="flex gap-3 p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
-          <AlertCircle size={20} className="text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-blue-700 dark:text-blue-300">
-            Bạn sẽ được thanh toán sau khi xác nhận đặt phòng thành công
-          </p>
-        </div>
+        {email && validateEmail(email) && (
+          <div className="flex gap-3 p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+            <AlertCircle size={20} className="text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-blue-700 dark:text-blue-300">
+              Email xác nhận sẽ được gửi đến <strong>{email}</strong> sau khi thanh toán thành công
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Booking Button */}
