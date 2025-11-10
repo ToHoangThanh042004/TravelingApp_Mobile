@@ -703,6 +703,25 @@
       "paymentDetails": {
         "type": "PayPal"
       }
+    },
+    {
+      "id": "0bf7",
+      "userId": "u001",
+      "hotelId": "1",
+      "roomId": 3,
+      "checkIn": "2025-11-10",
+      "checkOut": "2025-11-17",
+      "nights": 7,
+      "subtotal": 1750,
+      "tax": 175,
+      "serviceFee": 88,
+      "total": 2013,
+      "createdAt": "2025-11-10T09:05:00.199Z",
+      "status": "Confirmed",
+      "paymentMethod": "paypal",
+      "paymentDetails": {
+        "type": "PayPal"
+      }
     }
   ],
   "favorites": [
