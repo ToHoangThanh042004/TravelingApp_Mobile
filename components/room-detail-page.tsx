@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { ChevronLeft, Heart, Share2, Users, Bed, Wifi, Tv, Wind, Coffee, Droplet, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 interface RoomDetailPageProps {
   hotelId: string
@@ -53,14 +54,14 @@ export function RoomDetailPage({ hotelId, roomId, onBack, onProceedToPayment }: 
   useEffect(() => {
     async function fetchRoom() {
       try {
-        const res = await fetch(`http://localhost:3001/hotels/${hotelId}`)
+        const res = await fetch(`http://192.168.1.18:3001/hotels/${hotelId}`)
         const hotelData = await res.json()
         const foundRoom = hotelData.rooms.find((r: any) => r.id === roomId)
         setHotel(hotelData)
         setRoom(foundRoom)
 
         // Fetch booked dates for this room
-        const bookingsRes = await fetch(`http://localhost:3001/bookings`)
+        const bookingsRes = await fetch(`http://192.168.1.18:3001/bookings`)
         const allBookings = await bookingsRes.json()
         
         const activeStatuses = ["Confirmed", "Pending", "Checked-in"]
@@ -119,7 +120,7 @@ export function RoomDetailPage({ hotelId, roomId, onBack, onProceedToPayment }: 
     // Check for booking conflicts
     setCheckingAvailability(true)
     try {
-      const response = await fetch(`http://localhost:3001/bookings`)
+      const response = await fetch(`http://192.168.1.18:3001/bookings`)
       const allBookings = await response.json()
       
       // Filter bookings for this specific room with active statuses
@@ -188,16 +189,21 @@ export function RoomDetailPage({ hotelId, roomId, onBack, onProceedToPayment }: 
         />
         <button
           onClick={onBack}
-          className="absolute top-4 left-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors"
+          className="absolute top-4 left-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors dark:bg-gray-800/90 dark:hover:bg-gray-800"
         >
           <ChevronLeft size={24} className="text-foreground" />
         </button>
-        <button
-          onClick={() => setIsFavorite(!isFavorite)}
-          className="absolute top-4 right-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors"
-        >
-          <Heart size={24} className={isFavorite ? "fill-destructive text-destructive" : "text-foreground"} />
-        </button>
+        <div className="absolute top-4 right-4 flex gap-2">
+          <div className="bg-white/90 hover:bg-white rounded-full transition-colors dark:bg-gray-800/90 dark:hover:bg-gray-800">
+            <ThemeToggle />
+          </div>
+          <button
+            onClick={() => setIsFavorite(!isFavorite)}
+            className="bg-white/90 hover:bg-white rounded-full p-2 transition-colors dark:bg-gray-800/90 dark:hover:bg-gray-800"
+          >
+            <Heart size={24} className={isFavorite ? "fill-destructive text-destructive" : "text-foreground"} />
+          </button>
+        </div>
 
         {/* Image indicators */}
         {room.images && room.images.length > 1 && (

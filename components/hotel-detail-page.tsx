@@ -19,6 +19,10 @@ import {
   Coffee,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { MapView } from "@/components/map-view"
+import { LocationInfo } from "@/components/location-info"
+import { NearbyPlaces } from "@/components/nearby-places"
 
 interface HotelDetailPageProps {
   hotelId: string
@@ -57,6 +61,65 @@ interface Hotel {
     date: string
     text: string
   }[]
+  coordinates?: {
+    latitude: number
+    longitude: number
+  }
+  address?: {
+    street: string
+    ward: string
+    district: string
+    city: string
+    country: string
+    zipCode: string
+    fullAddress: string
+  }
+  distanceTo?: {
+    airport?: {
+      name: string
+      distance: number
+      unit: string
+      travelTime: {
+        driving: string
+        taxi?: string
+      }
+    }
+    cityCenter?: {
+      name: string
+      distance: number
+      unit: string
+      travelTime: {
+        walking?: string
+        driving: string
+      }
+    }
+    beach?: {
+      name: string
+      distance: number
+      unit: string
+      travelTime: {
+        walking: string
+      }
+    }
+    trainStation?: {
+      name: string
+      distance: number
+      unit: string
+      travelTime: {
+        driving: string
+      }
+    }
+  }
+  nearbyPlaces?: {
+    id: string
+    name: string
+    type: string
+    category: string
+    distance: number
+    unit: string
+    rating: number
+    icon: string
+  }[]
 }
 
 const iconMap: { [key: string]: React.ElementType } = {
@@ -84,7 +147,7 @@ export function HotelDetailPage({
   const [error, setError] = useState<string | null>(null)
 
   const CURRENT_USER_ID = "u001"
-  const API_URL = "http://localhost:3001"
+  const API_URL = "http://192.168.1.18:3001"
 
   // Fetch hotel data (bao gồm reviews mới nhất)
   const fetchHotelData = async () => {
@@ -229,12 +292,17 @@ export function HotelDetailPage({
         >
           <ChevronLeft size={24} className="text-foreground" />
         </button>
-        <button
-          onClick={handleToggleFavorite}
-          className="absolute top-4 right-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors"
-        >
-          <Heart size={24} className={isFavorite ? "fill-destructive text-destructive" : "text-foreground"} />
-        </button>
+        <div className="absolute top-4 right-4 flex gap-2">
+          <div className="bg-white/90 hover:bg-white rounded-full transition-colors dark:bg-gray-800/90 dark:hover:bg-gray-800">
+            <ThemeToggle />
+          </div>
+          <button
+            onClick={handleToggleFavorite}
+            className="bg-white/90 hover:bg-white rounded-full p-2 transition-colors dark:bg-gray-800/90 dark:hover:bg-gray-800"
+          >
+            <Heart size={24} className={isFavorite ? "fill-destructive text-destructive" : "text-foreground"} />
+          </button>
+        </div>
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
           {images.map((_, idx) => (
             <button
@@ -296,6 +364,44 @@ export function HotelDetailPage({
             })}
           </div>
         </div>
+
+        {/* Location & Map Section */}
+        {hotel.coordinates && (
+          <div>
+            <h2 className="text-lg font-bold text-foreground mb-4">📍 Location & Map</h2>
+            
+            {/* Address */}
+            {hotel.address && (
+              <div className="mb-4 p-4 bg-muted rounded-lg">
+                <p className="text-sm font-semibold text-foreground mb-1">Address</p>
+                <p className="text-sm text-muted-foreground">{hotel.address.fullAddress}</p>
+              </div>
+            )}
+
+            {/* Interactive Map */}
+            <div className="mb-4">
+              <MapView
+                latitude={hotel.coordinates.latitude}
+                longitude={hotel.coordinates.longitude}
+                hotelName={hotel.title}
+              />
+            </div>
+
+            {/* Distance Information */}
+            {hotel.distanceTo && (
+              <div className="mb-4">
+                <LocationInfo distanceTo={hotel.distanceTo} />
+              </div>
+            )}
+
+            {/* Nearby Places */}
+            {hotel.nearbyPlaces && hotel.nearbyPlaces.length > 0 && (
+              <div>
+                <NearbyPlaces places={hotel.nearbyPlaces} />
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Available Rooms */}
         <div>

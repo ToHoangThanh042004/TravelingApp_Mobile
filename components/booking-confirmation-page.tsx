@@ -3,6 +3,7 @@
 import { ChevronLeft, AlertCircle, CreditCard, Wallet, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { useState, useEffect } from "react"
 
 interface BookingConfirmationPageProps {
@@ -208,7 +209,8 @@ export function BookingConfirmationPage({ onBack, onConfirm, bookingData }: Book
           <button onClick={onBack} className="text-muted-foreground hover:text-foreground transition-colors">
             <ChevronLeft size={24} />
           </button>
-          <h1 className="text-lg font-bold text-foreground">Xác nhận thanh toán</h1>
+          <h1 className="text-lg font-bold text-foreground flex-1">Xác nhận thanh toán</h1>
+          <ThemeToggle />
         </div>
       </div>
 

@@ -2,6 +2,7 @@
 
 import { ChevronLeft, Heart } from "lucide-react"
 import { PropertyCard } from "@/components/property-card"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 interface FavoritesPageProps {
   
@@ -19,7 +20,8 @@ export function FavoritesPage({ favorites, onBack, onToggleFavorite }: Favorites
           <button onClick={onBack} className="text-muted-foreground hover:text-foreground transition-colors">
             <ChevronLeft size={24} />
           </button>
-          <h1 className="text-lg font-bold text-foreground">Places you liked</h1>
+          <h1 className="text-lg font-bold text-foreground flex-1">Places you liked</h1>
+          <ThemeToggle />
         </div>
       </div>
 

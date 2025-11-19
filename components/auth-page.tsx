@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Apple, Facebook, Mail } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { Facebook, Mail, Chrome } from "lucide-react"
 
 interface AuthPageProps {
   onAuthenticate: () => void
@@ -14,9 +15,10 @@ export function AuthPage({ onAuthenticate }: AuthPageProps) {
   const [step, setStep] = useState<"phone" | "otp">("phone")
   const [otpDigits, setOtpDigits] = useState<string[]>(Array(6).fill(""))
   const [timer, setTimer] = useState(0)
+  const [debugOtp, setDebugOtp] = useState<string | null>(null) // 👈 thêm state OTP hiển thị
   const inputRefs = useRef<Array<HTMLInputElement | null>>([])
 
-  const API_URL = "http://localhost:3001"
+  const API_URL = "http://192.168.1.18:3001"
 
   // Countdown resend OTP
   useEffect(() => {
@@ -33,6 +35,7 @@ export function AuthPage({ onAuthenticate }: AuthPageProps) {
     }
 
     setTimer(60)
+    setDebugOtp(null) // reset hiển thị OTP cũ
 
     // Xóa OTP cũ của số này
     const oldOtps = await fetch(`${API_URL}/otps?phoneNumber=${phoneNumber}`).then((r) => r.json())
@@ -45,10 +48,10 @@ export function AuthPage({ onAuthenticate }: AuthPageProps) {
     await fetch(`${API_URL}/otps`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phoneNumber, otp })
+      body: JSON.stringify({ phoneNumber, otp }),
     })
 
-    alert("OTP (Debug): " + otp) // chỉ dùng tạm khi dev
+    setDebugOtp(otp) // 👈 hiển thị OTP trên giao diện
     setStep("otp")
   }
 
@@ -85,7 +88,6 @@ export function AuthPage({ onAuthenticate }: AuthPageProps) {
     let user
 
     if (users.length === 0) {
-      // Tạo user mới
       const newUser = {
         phoneNumber,
         name: "User",
@@ -97,38 +99,50 @@ export function AuthPage({ onAuthenticate }: AuthPageProps) {
       const res = await fetch(`${API_URL}/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newUser)
+        body: JSON.stringify(newUser),
       })
       user = await res.json()
     } else {
-      // User đã có → cập nhật lastLogin
       user = users[0]
       await fetch(`${API_URL}/users/${user.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lastLogin: new Date().toISOString() })
+        body: JSON.stringify({ lastLogin: new Date().toISOString() }),
       })
     }
 
-    // Lưu thông tin user vào localStorage để HomePage đọc
     localStorage.setItem("authUser", JSON.stringify(user))
     localStorage.setItem("user", JSON.stringify(user))
 
-    // Chuyển sang HomePage
     onAuthenticate()
+  }
+
+  // Đăng nhập bằng Google (Chỉ giao diện - chưa tích hợp)
+  const handleGoogleLogin = () => {
+    alert("Tính năng đăng nhập bằng Google sẽ được tích hợp sau!")
+  }
+
+  // Đăng nhập bằng Facebook (Chỉ giao diện - chưa tích hợp)
+  const handleFacebookLogin = () => {
+    alert("Tính năng đăng nhập bằng Facebook sẽ được tích hợp sau!")
   }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8 bg-gradient-to-br from-background to-muted">
+      {/* Theme Toggle */}
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+
       {/* Logo */}
       <div className="mb-12 animate-fade-in">
-        <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
+        <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-md">
           <div className="text-2xl font-bold text-primary-foreground">✈</div>
         </div>
       </div>
 
       {/* Form chính */}
-      <div className="w-full max-w-sm bg-card rounded-2xl shadow-lg p-8 animate-slide-up">
+      <div className="w-full max-w-sm bg-card rounded-2xl shadow-lg p-8 animate-slide-up border border-border">
         <h1 className="text-2xl font-bold text-foreground mb-2">
           {step === "phone" ? "Create an account" : "Verify your number"}
         </h1>
@@ -142,7 +156,7 @@ export function AuthPage({ onAuthenticate }: AuthPageProps) {
         {step === "phone" ? (
           <>
             <div className="flex gap-2 mb-4">
-              <select className="w-16 px-2 py-3 border border-border rounded-lg bg-input text-foreground text-sm font-medium">
+              <select className="w-20 px-2 py-3 border border-border rounded-lg bg-input text-foreground text-sm font-medium">
                 <option>🇻🇳 +84</option>
               </select>
               <Input
@@ -153,9 +167,40 @@ export function AuthPage({ onAuthenticate }: AuthPageProps) {
                 className="flex-1"
               />
             </div>
-            <Button className="w-full py-3" onClick={sendOtp}>
+            <Button className="w-full py-3 font-semibold mb-6" onClick={sendOtp}>
               Continue
             </Button>
+
+            {/* Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-card text-muted-foreground">Or continue with</span>
+              </div>
+            </div>
+
+            {/* Social Login Buttons */}
+            <div className="space-y-3">
+              <Button
+                variant="outline"
+                className="w-full py-3 font-medium flex items-center justify-center gap-2 hover:bg-accent"
+                onClick={handleGoogleLogin}
+              >
+                <Chrome className="w-5 h-5 text-blue-500" />
+                <span>Continue with Google</span>
+              </Button>
+
+              <Button
+                variant="outline"
+                className="w-full py-3 font-medium flex items-center justify-center gap-2 hover:bg-accent"
+                onClick={handleFacebookLogin}
+              >
+                <Facebook className="w-5 h-5 text-blue-600" />
+                <span>Continue with Facebook</span>
+              </Button>
+            </div>
           </>
         ) : (
           <>
@@ -168,13 +213,12 @@ export function AuthPage({ onAuthenticate }: AuthPageProps) {
                   maxLength={1}
                   value={d}
                   onChange={(e) => handleOtpInput(e.target.value, i)}
-                  className="w-12 h-12 text-center text-lg font-bold"
-                  placeholder="0"
+                  className="w-12 h-12 text-center text-lg font-bold border-2 focus:border-primary"
                 />
               ))}
             </div>
 
-            <div className="text-center text-sm mb-4 text-muted-foreground">
+            <div className="text-center text-sm mb-3 text-muted-foreground">
               {timer > 0 ? (
                 <>Gửi lại mã sau <b>{timer}</b>s</>
               ) : (
@@ -184,7 +228,14 @@ export function AuthPage({ onAuthenticate }: AuthPageProps) {
               )}
             </div>
 
-            <Button className="w-full py-3" onClick={verifyOTP}>
+            {/* 👇 Hiển thị OTP debug trong giao diện */}
+            {debugOtp && (
+              <div className="text-center text-xs mb-3 text-green-600 font-mono">
+                (Mã OTP tạm thời: <b>{debugOtp}</b>)
+              </div>
+            )}
+
+            <Button className="w-full py-3 font-semibold" onClick={verifyOTP}>
               Verify
             </Button>
           </>
@@ -192,10 +243,30 @@ export function AuthPage({ onAuthenticate }: AuthPageProps) {
       </div>
 
       <style jsx>{`
-        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fade-in 0.6s ease-out; }
-        .animate-slide-up { animation: slide-up 0.6s ease-out; }
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        @keyframes slide-up {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.6s ease-out;
+        }
+        .animate-slide-up {
+          animation: slide-up 0.6s ease-out;
+        }
       `}</style>
     </div>
   )

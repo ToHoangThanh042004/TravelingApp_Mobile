@@ -30,6 +30,7 @@ server.post("/auth/verify", (req, res) => {
 })
 
 server.use(router)
-server.listen(3001, () => {
-  console.log("✅ JSON Server running at http://localhost:3001")
+server.listen(3001, '0.0.0.0', () => {
+  console.log("✅ JSON Server running at http://192.168.1.18:3001")
+  console.log("📱 Access from other devices on the network")
 })

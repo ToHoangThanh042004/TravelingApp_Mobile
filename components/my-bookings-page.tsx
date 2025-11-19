@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { ChevronLeft, MapPin, Calendar, DollarSign, Star, X, Loader2 } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 interface Booking {
   id: string
@@ -104,7 +105,7 @@ export function MyBookingsPage({
   onBack, 
   onViewDetails,
   userId = "u001",
-  apiUrl = "http://localhost:3001"
+  apiUrl = "http://192.168.1.18:3001"
 }: MyBookingsPageProps) {
   const [activeFilter, setActiveFilter] = useState<string>("all")
   const [selectedBooking, setSelectedBooking] = useState<DisplayBooking | null>(null)
@@ -366,15 +367,15 @@ export function MyBookingsPage({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-gray-50 pb-20">
+    <div className="min-h-screen bg-gradient-to-b from-background to-gray-50 pb-20 dark:to-gray-900">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+      <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700">
         <div className="flex items-center justify-between p-4">
-          <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <ChevronLeft className="w-6 h-6 text-gray-700" />
+          <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-lg transition-colors dark:hover:bg-gray-700">
+            <ChevronLeft className="w-6 h-6 text-gray-700 dark:text-gray-200" />
           </button>
-          <h1 className="text-xl font-bold text-gray-900">Đơn đặt phòng của tôi</h1>
-          <div className="w-10" />
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex-1 text-center">Đơn đặt phòng của tôi</h1>
+          <ThemeToggle />
         </div>
 
         {/* Search Bar */}
@@ -480,7 +481,7 @@ export function MyBookingsPage({
                   className="flex-1 px-3 py-2 bg-cyan-50 text-cyan-600 rounded-lg text-sm font-medium hover:bg-cyan-100 transition-colors"
                 >
                   Xem chi tiết
-                </button>\
+                </button>
                 {booking.status !== "Cancelled" && booking.status !== "Completed" && canCancelBooking(booking) && (
   <button
     onClick={() => handleCancelBooking(booking.id)}

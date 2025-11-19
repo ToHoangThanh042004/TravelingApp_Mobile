@@ -109,33 +109,43 @@ export default function Page() {
   const [bookingData, setBookingData] = useState<BookingData | null>(null)
   const [completedBookingId, setCompletedBookingId] = useState<string | null>(null)
 
-  const API_URL = "http://localhost:3001"
+  const API_URL = "http://192.168.1.18:3001"
 
   // Get current user ID from localStorage
   const getCurrentUserId = () => {
-    const storedUser = localStorage.getItem("authUser")
-    if (storedUser) {
-      try {
-        const user = JSON.parse(storedUser)
-        return user.id
-      } catch {
-        return "u001" // fallback
-      }
-    }
-    return "u001" // fallback
+  const storedUser = localStorage.getItem("authUser")
+  if (!storedUser) {
+    console.warn("⚠️ Không tìm thấy authUser — yêu cầu đăng nhập lại.")
+    return null
   }
+
+  try {
+    const user = JSON.parse(storedUser)
+    if (!user.id) {
+      console.warn("⚠️ authUser không có trường id:", user)
+      return null
+    }
+    return user.id
+  } catch (err) {
+    console.error("⚠️ Lỗi khi parse authUser:", err)
+    return null
+  }
+}
+
 
   // Check authentication on mount
   useEffect(() => {
-    const checkAuth = () => {
-      const storedUser = localStorage.getItem("authUser")
-      if (storedUser) {
-        setIsAuthenticated(true)
-        setCurrentPage("home")
-      }
-    }
-    checkAuth()
-  }, [])
+  const storedUser = localStorage.getItem("authUser")
+  if (storedUser) {
+    setIsAuthenticated(true)
+    setCurrentPage("home")
+  } else {
+    // Không có user => ép quay về trang login
+    setIsAuthenticated(false)
+    setCurrentPage("auth")
+  }
+}, [])
+
 
   // Fetch data from db.json
   useEffect(() => {

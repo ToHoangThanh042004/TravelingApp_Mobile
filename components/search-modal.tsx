@@ -1,7 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { X, ChevronLeft, ChevronRight, MapPin } from "lucide-react"
+
+// Debounce hook
+function useDebounce<T>(value: T, delay: number = 300): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value)
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay)
+    return () => clearTimeout(handler)
+  }, [value, delay])
+  return debouncedValue
+}
 
 export type SearchFilters = {
   location: string
@@ -46,9 +56,12 @@ export function SearchModal({ onClose, onSearch, initialFilters }: SearchModalPr
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [searchQuery, setSearchQuery] = useState("")
 
-  // Lọc tỉnh thành theo tìm kiếm
+  // Debounce search query
+  const debouncedSearchQuery = useDebounce(searchQuery, 300)
+
+  // Lọc tỉnh thành theo tìm kiếm với debounced value
   const filteredProvinces = VIETNAM_PROVINCES.filter(p =>
-    p.name.toLowerCase().includes(searchQuery.toLowerCase())
+    p.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
   )
 
   const getDaysInMonth = (date: Date) => {

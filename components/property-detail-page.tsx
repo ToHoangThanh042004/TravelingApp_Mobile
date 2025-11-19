@@ -19,6 +19,7 @@ import {
   Coffee,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 // Định nghĩa interface cho dữ liệu từ db.json
 interface Facility {
@@ -80,7 +81,7 @@ export function PropertyDetailPage({ propertyId, onBack, onBooking }: PropertyDe
     const fetchProperty = async () => {
       try {
         setIsLoading(true)
-        const response = await fetch(`http://localhost:3001/hotels/${propertyId}`)
+        const response = await fetch(`http://192.168.1.18:3001/hotels/${propertyId}`)
         if (!response.ok) {
           throw new Error("Failed to fetch property")
         }
@@ -106,7 +107,7 @@ export function PropertyDetailPage({ propertyId, onBack, onBooking }: PropertyDe
 
         // Kiểm tra trạng thái yêu thích (giả sử bạn có userId, ví dụ: u001)
         const favoritesResponse = await fetch(
-          `http://localhost:3001/favorites?userId=u001&propertyId=${propertyId}`
+          `http://192.168.1.18:3001/favorites?userId=u001&propertyId=${propertyId}`
         )
         const favoritesData = await favoritesResponse.json()
         setIsFavorite(favoritesData.length > 0)
@@ -127,17 +128,17 @@ export function PropertyDetailPage({ propertyId, onBack, onBooking }: PropertyDe
       if (isFavorite) {
         // Xóa khỏi danh sách yêu thích
         const favorite = await fetch(
-          `http://localhost:3001/favorites?userId=u001&propertyId=${propertyId}`
+          `http://192.168.1.18:3001/favorites?userId=u001&propertyId=${propertyId}`
         )
         const favoriteData = await favorite.json()
         if (favoriteData[0]) {
-          await fetch(`http://localhost:3001/favorites/${favoriteData[0].id}`, {
+          await fetch(`http://192.168.1.18:3001/favorites/${favoriteData[0].id}`, {
             method: "DELETE",
           })
         }
       } else {
         // Thêm vào danh sách yêu thích
-        await fetch("http://localhost:3001/favorites", {
+        await fetch("http://192.168.1.18:3001/favorites", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -174,16 +175,21 @@ export function PropertyDetailPage({ propertyId, onBack, onBooking }: PropertyDe
         <img src={property.image || "/placeholder.svg"} alt={property.title} className="w-full h-64 object-cover" />
         <button
           onClick={onBack}
-          className="absolute top-4 left-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors"
+          className="absolute top-4 left-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors dark:bg-gray-800/90 dark:hover:bg-gray-800"
         >
           <ChevronLeft size={24} className="text-foreground" />
         </button>
-        <button
-          onClick={handleToggleFavorite}
-          className="absolute top-4 right-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors"
-        >
-          <Heart size={24} className={isFavorite ? "fill-destructive text-destructive" : "text-foreground"} />
-        </button>
+        <div className="absolute top-4 right-4 flex gap-2">
+          <div className="bg-white/90 hover:bg-white rounded-full transition-colors dark:bg-gray-800/90 dark:hover:bg-gray-800">
+            <ThemeToggle />
+          </div>
+          <button
+            onClick={handleToggleFavorite}
+            className="bg-white/90 hover:bg-white rounded-full p-2 transition-colors dark:bg-gray-800/90 dark:hover:bg-gray-800"
+          >
+            <Heart size={24} className={isFavorite ? "fill-destructive text-destructive" : "text-foreground"} />
+          </button>
+        </div>
       </div>
 
       {/* Content */}

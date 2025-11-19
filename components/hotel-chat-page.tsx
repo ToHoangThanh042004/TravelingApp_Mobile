@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { ArrowLeft, Send, Hotel, User } from "lucide-react"
 import { motion } from "framer-motion"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 interface Message {
   id: string
@@ -89,7 +90,7 @@ export function HotelChatPage({ onBack, hotelName }: HotelChatPageProps) {
           <button onClick={onBack} className="p-2 hover:bg-muted rounded-full transition-colors">
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-1">
             <div className="relative">
               <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                 <Hotel className="w-5 h-5 text-primary" />
@@ -101,6 +102,7 @@ export function HotelChatPage({ onBack, hotelName }: HotelChatPageProps) {
               <p className="text-xs text-green-600">Đang trực tuyến</p>
             </div>
           </div>
+          <ThemeToggle />
         </div>
       </div>
 

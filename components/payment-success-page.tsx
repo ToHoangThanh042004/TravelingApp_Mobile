@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 interface Booking {
   id: string
@@ -39,8 +40,8 @@ export function PaymentSuccessPage({ bookingId, onBackHome }: PaymentSuccessPage
   const [user, setUser] = useState<User | null>(null)
   const [hotel, setHotel] = useState<Hotel | null>(null)
 
-  // ⚙️ Giả sử JSON Server chạy ở localhost:3001
-  const API_URL = "http://localhost:3001"
+  // ⚙️ JSON Server API URL
+  const API_URL = "http://192.168.1.18:3001"
 
   useEffect(() => {
     const fetchBookingData = async () => {
@@ -87,6 +88,11 @@ export function PaymentSuccessPage({ bookingId, onBackHome }: PaymentSuccessPage
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-8">
+      {/* Theme Toggle */}
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+
       {/* Success Icon */}
       <div className="mb-8 animate-scale-in">
         <div className="w-20 h-20 bg-green-100 dark:bg-green-950 rounded-full flex items-center justify-center">

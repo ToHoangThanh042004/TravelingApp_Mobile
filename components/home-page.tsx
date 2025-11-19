@@ -1,16 +1,20 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import dynamic from "next/dynamic"
 import { SearchBar, SearchFilters } from "@/components/search-bar"
 import { PropertyCard } from "@/components/property-card"
 import { BottomNav } from "@/components/bottom-nav"
-import { SearchModal } from "@/components/search-modal"
-import { FilterModal } from "@/components/filter-modal"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { Heart, MapPin, Camera } from "lucide-react"
 import { motion } from "framer-motion"
-import { EditProfileModal } from "./edit-profile-modal"
-import { MyBookingsPage } from "./my-bookings-page"
-import { HotelChatPage } from "./hotel-chat-page"
+
+// Dynamic imports - chỉ load khi cần
+const SearchModal = dynamic(() => import("@/components/search-modal").then(mod => ({ default: mod.SearchModal })), { ssr: false })
+const FilterModal = dynamic(() => import("@/components/filter-modal").then(mod => ({ default: mod.FilterModal })), { ssr: false })
+const EditProfileModal = dynamic(() => import("./edit-profile-modal").then(mod => ({ default: mod.EditProfileModal })), { ssr: false })
+const MyBookingsPage = dynamic(() => import("./my-bookings-page").then(mod => ({ default: mod.MyBookingsPage })), { ssr: false })
+const HotelChatPage = dynamic(() => import("./hotel-chat-page").then(mod => ({ default: mod.HotelChatPage })), { ssr: false })
 
 interface HomePageProps {
   onViewProperty: (id: string) => void
@@ -46,7 +50,7 @@ export function HomePage({
   const [localFavorites, setLocalFavorites] = useState<string[]>(favorites || [])
   const [showBookings, setShowBookings] = useState(false)
   const [showChat, setShowChat] = useState(false)
-  const apiBase = "http://localhost:3001"
+  const apiBase = "http://192.168.1.18:3001"
 
   // State cho search filters
   const [searchFilters, setSearchFilters] = useState<SearchFilters>({
@@ -132,8 +136,8 @@ export function HomePage({
   }
 
   const filteredProperties = filterProperties()
-  const hasActiveFilters = searchFilters.location || searchFilters.checkIn || 
-                           (searchFilters.adults + searchFilters.children) > 0
+  const hasActiveFilters = searchFilters.location || searchFilters.checkIn ||
+    (searchFilters.adults + searchFilters.children) > 0
 
   const handleTabChange = (tab: string) => {
     if (tab === "bookings") {
@@ -202,11 +206,14 @@ export function HomePage({
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-card border-b border-border shadow-sm">
-        <div className="max-w-md mx-auto px-4 py-4">
-          <SearchBar 
-            onOpenSearch={() => setShowSearch(true)} 
-            filters={searchFilters}
-          />
+        <div className="max-w-md mx-auto px-4 py-4 flex items-center gap-2">
+          <div className="flex-1">
+            <SearchBar
+              onOpenSearch={() => setShowSearch(true)}
+              filters={searchFilters}
+            />
+          </div>
+          <ThemeToggle />
         </div>
       </div>
 
@@ -216,8 +223,8 @@ export function HomePage({
           <div className="space-y-4 animate-fade-in">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold text-foreground">
-                {hasActiveFilters 
-                  ? `${filteredProperties.length} stay${filteredProperties.length !== 1 ? 's' : ''} found` 
+                {hasActiveFilters
+                  ? `${filteredProperties.length} stay${filteredProperties.length !== 1 ? 's' : ''} found`
                   : 'Popular stays'}
               </h2>
               {hasActiveFilters && (
@@ -294,7 +301,7 @@ export function HomePage({
         {activeTab === "profile" && (
           <div className="animate-fade-in">
             <h2 className="text-lg font-bold text-foreground mb-4">Profile</h2>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -326,12 +333,12 @@ export function HomePage({
                   >
                     Edit Profile
                   </button>
-                  
+
                   <button
                     className="w-full py-2 px-4 mt-2 border border-border text-foreground rounded-lg font-medium hover:bg-muted transition-colors"
                     onClick={() => setShowChat(true)}
                   >
-                    Chat với khách sạn
+                    Chat With Hotel
                   </button>
 
                   <button
@@ -356,15 +363,15 @@ export function HomePage({
 
       {/* Modals */}
       {showSearch && (
-        <SearchModal 
-          onClose={() => setShowSearch(false)} 
+        <SearchModal
+          onClose={() => setShowSearch(false)}
           onSearch={handleSearch}
           initialFilters={searchFilters}
         />
       )}
-      
+
       {showFilter && (
-        <FilterModal 
+        <FilterModal
           onClose={() => setShowFilter(false)}
           onApply={(filters) => {
             console.log("Filters applied:", filters)
@@ -372,7 +379,7 @@ export function HomePage({
           }}
         />
       )}
-      
+
       {showEdit && user && (
         <EditProfileModal
           user={user}
